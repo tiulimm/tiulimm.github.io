@@ -175,11 +175,13 @@
   .toggle-thumb{position:absolute;top:3px;right:3px;width:20px;height:20px;background:white;border-radius:50%;transition:var(--transition);box-shadow:0 2px 4px rgba(0,0,0,0.2);}
   .toggle input:checked~.toggle-thumb{right:auto;left:3px;}
   
+  /* Multi Image Upload */
   .img-upload-area{border:2px dashed var(--border);border-radius:12px;padding:30px 20px;text-align:center;cursor:pointer;transition:var(--transition);position:relative;background:var(--bg);}
   .img-upload-area:hover{border-color:var(--accent);background:var(--accent-light);}
   .img-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
   .img-upload-area p{font-size:14px;font-weight:500;color:var(--text2);margin:0;}
-  .img-preview{width:100%;height:180px;object-fit:cover;border-radius:8px;margin-top:12px;display:none;box-shadow:var(--shadow);}
+  .multi-preview {display: flex; gap: 8px; overflow-x: auto; margin-top: 16px; flex-wrap: wrap; justify-content: center;}
+  .multi-preview img {height: 60px; width: 60px; object-fit: cover; border-radius: 8px; box-shadow: var(--shadow); border:1px solid var(--border);}
   
   .btn-submit{background:linear-gradient(135deg, var(--accent), var(--accent2));color:white;border:none;padding:14px;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:var(--transition);width:100%;box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);}
   .btn-submit:hover{transform:translateY(-2px);box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);}
@@ -193,16 +195,26 @@
   #detail-modal .modal-close{ background: rgba(0,0,0,0.5); color: white; border: none; backdrop-filter: blur(4px); margin-right: auto;}
   #detail-modal .modal-close:hover{ background: rgba(0,0,0,0.8); }
   
-  /* Full Image Display */
-  .detail-img-wrapper {
-    width: 100%;
-    background: #0f172a; /* Dark background so image pops */
+  /* Gallery Wrapper */
+  .detail-gallery-wrapper {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    background: #0f172a; 
     border-radius: 24px 24px 0 0;
+    -webkit-overflow-scrolling: touch;
   }
-  .detail-img{width:100%; max-height:450px; object-fit:contain; flex-shrink:0;}
+  .detail-gallery-wrapper::-webkit-scrollbar { height: 4px; }
+  .detail-gallery-wrapper::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
+  
+  .detail-gallery-img {
+    scroll-snap-align: center;
+    flex: 0 0 100%;
+    width: 100%;
+    max-height: 450px;
+    object-fit: contain;
+    background: #0f172a;
+  }
   
   /* Map in detail */
   .detail-map-wrapper { width: 100%; padding: 0 24px; }
@@ -246,8 +258,8 @@
     .row-fields, .coords-row {grid-template-columns:1fr;}
     .modal-body{padding:20px;}
     .detail-body{padding:20px;}
-    .detail-img-wrapper{border-radius: 20px 20px 0 0;}
-    .detail-img{max-height: 300px;}
+    .detail-gallery-wrapper{border-radius: 20px 20px 0 0;}
+    .detail-gallery-img{max-height: 300px;}
     .detail-map-wrapper { padding: 0 20px; }
   }
 </style>
@@ -346,12 +358,13 @@
         </div>
       </div>
       <div class="field">
-        <label>תמונה <span>(אופציונלי)</span></label>
+        <label>תמונות <span>(אופציונלי, ניתן לבחור מספר תמונות יחד)</span></label>
         <div class="img-upload-area">
-          <input type="file" id="f-image" accept="image/*" onchange="onImageSelected()">
-          <p id="upload-hint">📷 לחצו כאן לבחירת תמונה</p>
-          <img id="img-preview" class="img-preview" alt="">
+          <input type="file" id="f-image" accept="image/*" multiple onchange="onImageSelected()">
+          <p id="upload-hint">📷 לחצו כאן לבחירת תמונות מהמכשיר</p>
+          <div id="multi-img-preview" class="multi-preview"></div>
         </div>
+        <input type="url" id="f-image-url" placeholder="או הדביקו קישור לכתובת תמונה ברשת (http://...)" style="margin-top:8px;">
       </div>
       <div class="field">
         <label>תיאור <span>(אופציונלי)</span></label>
@@ -368,7 +381,7 @@
         </div>
       </div>
       <div class="field">
-        <label>קישור <span style="color:var(--closed)">*</span> <span>(אתר רשמי, גוגל מפות, וכו')</span></label>
+        <label>קישור למידע נוסף <span>(אופציונלי - אתר רשמי, עמוד מידע וכו')</span></label>
         <input type="url" id="f-link" placeholder="https://">
       </div>
       <div class="field">
@@ -569,6 +582,14 @@ function dist(loc) {
   return Math.sqrt(Math.pow(loc.lat-state.userLat,2)+Math.pow(loc.lng-state.userLng,2));
 }
 
+// פונקציית עזר לפענוח קישורי תמונות
+function resolveImageUrl(urlStr) {
+  if (!urlStr) return '';
+  const firstUrl = urlStr.split(',')[0].trim();
+  if (!firstUrl) return '';
+  return firstUrl.startsWith('http') ? firstUrl : API + firstUrl;
+}
+
 function renderGrid() {
   const grid=document.getElementById('grid');
   state.cardMaps={};
@@ -592,8 +613,10 @@ function cardHTML(loc) {
     : '<span class="status-badge status-free">חינם</span>';
   
   let imgSection;
-  if (loc.image_url) {
-    imgSection=`<div class="card-img"><img src="${API}${loc.image_url}" alt="${escHtml(loc.name)}" loading="lazy"></div>`;
+  const thumbUrl = resolveImageUrl(loc.image_url);
+  
+  if (thumbUrl) {
+    imgSection=`<div class="card-img"><img src="${thumbUrl}" alt="${escHtml(loc.name)}" loading="lazy"></div>`;
   } else if (loc.lat&&loc.lng) {
     imgSection=`<div class="card-img-map" id="cmap-${loc.id}"></div>`;
   } else {
@@ -661,19 +684,30 @@ function openDetail(id) {
   const likedClass=loc.liked_by_me?'liked':'';
   
   let topSection='';
-  // תמיד מציג תמונה (אם קיימת)
+  // תומך במספר תמונות!
   if (loc.image_url) {
-    topSection += `<div class="detail-img-wrapper"><img class="detail-img" src="${API}${loc.image_url}" alt="${escHtml(loc.name)}"></div>`;
+    const urls = loc.image_url.split(',').filter(u=>u.trim());
+    
+    if(urls.length === 1) {
+       const src = urls[0].startsWith('http') ? urls[0] : API + urls[0];
+       topSection = `<div class="detail-gallery-wrapper"><img class="detail-gallery-img" src="${src}" alt="${escHtml(loc.name)}"></div>`;
+    } else if (urls.length > 1) {
+       let imgsHtml = urls.map(u => {
+         const src = u.trim().startsWith('http') ? u.trim() : API + u.trim();
+         return `<img class="detail-gallery-img" src="${src}" alt="${escHtml(loc.name)}">`;
+       }).join('');
+       topSection = `<div class="detail-gallery-wrapper">${imgsHtml}</div>`;
+    }
   }
   
   const addrRow=loc.address?`<div class="detail-row"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>${escHtml(loc.address)}</div>`:'';
   const hoursRow=loc.hours?`<div class="detail-row"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${escHtml(loc.hours)}</div>`:'';
-  const linkRow=loc.link?`<div class="detail-row"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><a href="${escHtml(loc.link)}" target="_blank" rel="noopener">למעבר לניווט / אתר</a></div>`:'';
+  const linkRow=loc.link?`<div class="detail-row"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><a href="${escHtml(loc.link)}" target="_blank" rel="noopener">למעבר למידע נוסף / ניווט</a></div>`:'';
   
   const isOwner=state.user&&state.user.user_id===loc.user_id;
   const delBtn=isOwner?`<button class="btn-delete" onclick="deleteLocation(${loc.id});closeDetail()" style="margin-right:auto;padding:8px" title="מחק מקום"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>`:'';
 
-  // יצירת אזור המפה - תמיד יתווסף אם יש קואורדינטות
+  // אזור המפה 
   let mapHtml = '';
   if (loc.lat && loc.lng) {
       mapHtml = `<div class="detail-map-wrapper"><div class="detail-img-map" id="detail-map"></div></div>`;
@@ -706,7 +740,6 @@ function openDetail(id) {
           <svg class="heart" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
           <span id="detail-like-count-${loc.id}">${loc.like_count||0}</span> אהבתי
         </button>
-        ${loc.link?`<a class="btn-nav-link" href="${escHtml(loc.link)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>מידע נוסף</a>`:''}
         ${delBtn}
       </div>
     </div>`;
@@ -722,7 +755,7 @@ function openDetail(id) {
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
       m.setView([loc.lat,loc.lng],14);
       L.circleMarker([loc.lat,loc.lng],{radius:10,fillColor:'#10b981',color:'#fff',weight:3,fillOpacity:1}).addTo(m);
-    },150); // השהייה קלה כדי לאפשר לחלונית להתרנדר
+    },150);
   }
 }
 function closeDetail() { document.getElementById('detail-modal').classList.remove('open'); }
@@ -772,28 +805,39 @@ document.getElementById('modal').addEventListener('click',e=>{
 });
 
 function clearForm() {
-  ['f-name','f-address','f-hours','f-link','f-desc','f-lat','f-lng','map-search-input'].forEach(id=>{
+  ['f-name','f-address','f-hours','f-link','f-desc','f-lat','f-lng','map-search-input','f-image-url'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.value='';
   });
   document.getElementById('f-category').value='';
   document.getElementById('f-is-paid').value='0';
   document.getElementById('f-open').checked=true;
   document.getElementById('f-image').value='';
-  document.getElementById('img-preview').style.display='none';
-  document.getElementById('upload-hint').textContent='📷 לחצו כאן לבחירת תמונה';
+  document.getElementById('multi-img-preview').innerHTML='';
+  document.getElementById('upload-hint').textContent='📷 לחצו כאן לבחירת תמונות מהמכשיר';
   if(state.pickerMarker){state.pickerMarker.remove();state.pickerMarker=null;}
 }
 
 function onImageSelected() {
-  const file=document.getElementById('f-image').files[0];
-  if(!file) return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    const prev=document.getElementById('img-preview');
-    prev.src=e.target.result; prev.style.display='block';
-    document.getElementById('upload-hint').textContent=file.name;
-  };
-  reader.readAsDataURL(file);
+  const files=document.getElementById('f-image').files;
+  const previewBox = document.getElementById('multi-img-preview');
+  previewBox.innerHTML = '';
+  
+  if(!files || files.length === 0) {
+    document.getElementById('upload-hint').textContent='📷 לחצו כאן לבחירת תמונות מהמכשיר';
+    return;
+  }
+  
+  document.getElementById('upload-hint').textContent = `נבחרו ${files.length} תמונות 🖼️`;
+  
+  Array.from(files).forEach(file => {
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      previewBox.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 function initPickerMap() {
@@ -845,29 +889,44 @@ async function submitLocation() {
   errEl.style.display='none';
   const name=document.getElementById('f-name').value.trim();
   const cat=document.getElementById('f-category').value;
-  const link=document.getElementById('f-link').value.trim();
+  // הוסר אילוץ של קישור חובה
+  const link=document.getElementById('f-link').value.trim(); 
   const lat=document.getElementById('f-lat').value;
   const lng=document.getElementById('f-lng').value;
+  
   if(!name){showErr('שם המקום הוא שדה חובה');return;}
   if(!cat){showErr('יש לבחור קטגוריה');return;}
-  if(!link){showErr('קישור הוא שדה חובה');return;}
   if(!lat||!lng){showErr('יש לסמן את המיקום על המפה');return;}
 
   const btn=document.getElementById('submit-btn');
   btn.disabled=true; btn.textContent='שומר נתונים...';
+  
   try {
-    let image_url='';
-    const imageFile=document.getElementById('f-image').files[0];
-    if(imageFile) {
-      btn.textContent='מעלה תמונה...';
-      const fd=new FormData();
-      fd.append('image',imageFile);
-      const upRes=await fetch(API+'/api/upload',{method:'POST',headers:{'Authorization':'Bearer '+state.token},body:fd});
-      const upData=await upRes.json();
-      if(!upRes.ok) throw new Error(upData.error||'שגיאה בהעלאת תמונה');
-      image_url=upData.url;
-      btn.textContent='שומר...';
+    let uploadedUrls = [];
+    
+    // קריאת כתובת תמונה ישירה אם הוזנה
+    const manualUrl = document.getElementById('f-image-url').value.trim();
+    if(manualUrl) {
+      uploadedUrls.push(manualUrl);
     }
+    
+    // העלאת תמונות פיזיות במידה ונבחרו
+    const imageFiles=document.getElementById('f-image').files;
+    if(imageFiles && imageFiles.length > 0) {
+      btn.textContent=`מעלה ${imageFiles.length} תמונות...`;
+      for(let i=0; i<imageFiles.length; i++){
+        const fd=new FormData();
+        fd.append('image',imageFiles[i]);
+        const upRes=await fetch(API+'/api/upload',{method:'POST',headers:{'Authorization':'Bearer '+state.token},body:fd});
+        const upData=await upRes.json();
+        if(!upRes.ok) throw new Error(upData.error||'שגיאה בהעלאת תמונה');
+        uploadedUrls.push(upData.url);
+      }
+    }
+    
+    btn.textContent='שומר מיקום...';
+    // מחברים את כל הכתובות יחד עם פסיקים
+    const finalImageUrlString = uploadedUrls.join(',');
     
     await apiFetch('/api/locations','POST',{
       name, category:cat,
@@ -877,8 +936,9 @@ async function submitLocation() {
       link, lat:parseFloat(lat), lng:parseFloat(lng),
       is_open:document.getElementById('f-open').checked,
       is_paid:document.getElementById('f-is-paid').value === '1',
-      image_url,
+      image_url: finalImageUrlString,
     });
+    
     document.getElementById('modal').classList.remove('open');
     if(isFirstContrib){state.user.has_contributed=true;showApp();}
     loadLocations();
