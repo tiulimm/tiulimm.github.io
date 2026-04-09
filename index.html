@@ -365,7 +365,8 @@
 </div>
 
 <script>
-const API = 'http://127.0.0.1:5000'; // ודא ששרת ה-Python פועל בכתובת הזו
+// המיקום התעדכן לשרת החדש שלך
+const API = 'https://sound.pythonanywhere.com';
 const GOOGLE_CLIENT_ID = '426523025549-7c50rkn7cun4vmm2r802u0ij6egjehtg.apps.googleusercontent.com';
 const CATEGORIES = ['מעיינות ורטובים','אקשן ואקסטרים','נוף ותצפיות','חופים ומים','הרים וטבע','ערים ותרבות','אוכל ושתייה','אחר'];
 
@@ -378,7 +379,6 @@ let state = {
 let isFirstContrib = false;
 let searchTimer = null;
 
-// בדוק אם המשתמש כבר מחובר ברגע שהדף נטען
 document.addEventListener('DOMContentLoaded', () => {
   buildFilters();
   const savedToken = localStorage.getItem('token');
@@ -392,8 +392,6 @@ function initGoogle() {
   google.accounts.id.initialize({
     client_id: GOOGLE_CLIENT_ID,
     callback: handleGoogleCredential,
-    // ביטלנו את הקפיצה האוטומטית שדורשת הרשאות מיוחדות במכשיר הנייד:
-    // auto_select: true 
   });
   google.accounts.id.renderButton(document.getElementById('google-btn'), {
     theme:'outline', size:'large', locale:'he', shape:'rectangular', width:280,
@@ -409,9 +407,8 @@ async function verifyStoredToken(token) {
     else { showApp(); loadLocations(); }
   } catch(e) {
     if (e.message.includes('Failed to fetch')) {
-      alert('שגיאת תקשורת: הדפדפן לא מצליח להתחבר לשרת. ודאו שקובץ ה-Python פועל ברקע (app.py).');
+      alert('שגיאת תקשורת: הדפדפן לא מצליח להתחבר לשרת. ודאו שהשרת פעיל.');
     } else {
-      // האסימון פג תוקף או שגוי
       localStorage.removeItem('token');
       state.token = null;
     }
@@ -420,7 +417,7 @@ async function verifyStoredToken(token) {
 
 async function handleGoogleCredential(resp) {
   state.token = resp.credential;
-  localStorage.setItem('token', state.token); // שמירת האסימון לפעם הבאה
+  localStorage.setItem('token', state.token);
   try {
     const res = await apiFetch('/api/auth','POST',{token:state.token});
     state.user = res;
@@ -429,7 +426,7 @@ async function handleGoogleCredential(resp) {
     else { showApp(); loadLocations(); }
   } catch(e) { 
     if (e.message.includes('Failed to fetch')) {
-        alert('שגיאת תקשורת: הדפדפן לא מצליח להתחבר לשרת. ודאו שקובץ ה-Python פועל ברקע (app.py).');
+        alert('שגיאת תקשורת: הדפדפן לא מצליח להתחבר לשרת.');
     } else {
         alert('שגיאה בהתחברות: '+e.message); 
     }
@@ -445,7 +442,7 @@ function showUserArea() {
 
 function signOut() {
   google.accounts.id.disableAutoSelect();
-  localStorage.removeItem('token'); // מחיקת השמירה מהזיכרון
+  localStorage.removeItem('token');
   state.user=null; state.token=null;
   document.getElementById('user-area').innerHTML='';
   document.getElementById('auth-wall').style.display='flex';
@@ -508,7 +505,7 @@ async function loadLocations() {
     renderGrid();
   } catch(e) {
     if (e.message.includes('Failed to fetch')) {
-        document.getElementById('grid').innerHTML=`<div class="empty"><h3>שגיאת תקשורת</h3><p>לא ניתן להתחבר לשרת. ודאו שהשרת פעיל.</p></div>`;
+        document.getElementById('grid').innerHTML=`<div class="empty"><h3>שגיאת תקשורת</h3><p>לא ניתן להתחבר לשרת.</p></div>`;
     } else {
         document.getElementById('grid').innerHTML=`<div class="empty"><h3>שגיאה בטעינה</h3><p>${e.message}</p></div>`;
     }
