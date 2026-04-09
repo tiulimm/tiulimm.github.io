@@ -288,14 +288,57 @@ textarea{min-height:90px;resize:vertical}
 .a-posts{font-size:10px;color:var(--text2);font-weight:500}
 
 /* ── ADVANCED FILTER ── */
-.adv-filter{background:var(--bg2);border:1.5px solid var(--border);border-radius:14px;padding:12px 18px;margin-bottom:20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:var(--shadow)}
-.adv-filter label{font-size:12px;font-weight:700;color:var(--text2);white-space:nowrap}
-.adv-filter select{font-size:13px;font-weight:600;font-family:'Heebo',sans-serif;color:var(--text);background:var(--bg);border:1.5px solid var(--border);padding:7px 12px;border-radius:9px;cursor:pointer;outline:none;transition:.2s;min-width:130px}
-.adv-filter select:focus{border-color:var(--accent)}
-.adv-clear{font-size:12px;font-weight:600;color:var(--text2);background:none;border:1.5px solid var(--border);padding:6px 12px;border-radius:8px;cursor:pointer;transition:.2s;font-family:'Heebo',sans-serif}
-.adv-clear:hover{border-color:var(--closed);color:var(--closed)}
-.filter-count{font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-light);padding:3px 10px;border-radius:20px;margin-right:auto}
-
+.adv-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  padding: 0;
+  margin-bottom: 0;
+  border: none;
+  box-shadow: none;
+}
+.adv-filter select {
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Heebo', sans-serif;
+  color: var(--text);
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  outline: none;
+  transition: .2s;
+  min-width: unset; /* ביטול רוחב מינימלי למראה צר יותר */
+}
+.adv-filter select:focus {
+  border-color: var(--accent);
+}
+.adv-clear {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text2);
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: .2s;
+  font-family: 'Heebo', sans-serif;
+}
+.adv-clear:hover {
+  border-color: var(--closed);
+  color: var(--closed);
+}
+.filter-count {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: 2px 8px;
+  border-radius: 20px;
+}
 /* ── AD BANNER ── */
 #ad-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center;padding:20px}
 #ad-backdrop.open{display:flex;animation:fadeIn .3s}
@@ -422,41 +465,39 @@ textarea{min-height:90px;resize:vertical}
   <div class="app-inner">
     <div class="toolbar">
       <span class="toolbar-title">מקומות מומלצים</span>
-      <div class="toolbar-right">
+ <div class="toolbar-right" style="gap: 8px;">
+        <div class="adv-filter" id="adv-filter">
+          <span style="font-size: 14px; opacity: 0.7;" title="סינון">🔍</span>
+          <select id="adv-region" onchange="applyAdvFilter()">
+            <option value="">כל האזורים</option>
+            <option value="צפון">צפון</option>
+            <option value="מרכז">מרכז</option>
+            <option value="דרום">דרום</option>
+          </select>
+          <select id="adv-cat" onchange="applyAdvFilter()">
+            <option value="">כל הקטגוריות</option>
+          </select>
+          <select id="adv-paid" onchange="applyAdvFilter()">
+            <option value="">הכל</option>
+            <option value="free">חינם</option>
+            <option value="paid">בתשלום</option>
+          </select>
+          <button class="adv-clear" onclick="clearAdvFilter()" title="נקה סינון">✕</button>
+          <span class="filter-count" id="filter-count" style="display:none"></span>
+        </div>
+        
         <select class="sort-select" id="sort-select" onchange="renderGrid()">
           <option value="newest">חדש ביותר</option>
           <option value="liked">הכי אהוב</option>
           <option value="nearest">קרוב אליי</option>
         </select>
+        
         <button class="btn-add" onclick="openModal(false)">
           <svg viewBox="0 0 24 24" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           הוספת מקום
         </button>
       </div>
     </div>
-    <!-- Advanced filter -->
-    <div class="adv-filter" id="adv-filter">
-      <label>🔍 סינון מתקדם:</label>
-      <select id="adv-region" onchange="applyAdvFilter()">
-        <option value="">כל האזורים</option>
-        <option value="צפון">צפון</option>
-        <option value="מרכז">מרכז</option>
-        <option value="דרום">דרום</option>
-      </select>
-      <select id="adv-cat" onchange="applyAdvFilter()">
-        <option value="">כל הקטגוריות</option>
-      </select>
-      <select id="adv-paid" onchange="applyAdvFilter()">
-        <option value="">חינם + בתשלום</option>
-        <option value="free">חינם בלבד</option>
-        <option value="paid">בתשלום בלבד</option>
-      </select>
-      <button class="adv-clear" onclick="clearAdvFilter()">✕ נקה</button>
-      <span class="filter-count" id="filter-count" style="display:none"></span>
-    </div>
-    <div class="grid" id="grid"><div class="loading">טוען מקומות...</div></div>
-  </div>
-</div>
 
 <!-- Add/Edit Modal - Multi Step -->
 <div class="modal-backdrop" id="modal">
