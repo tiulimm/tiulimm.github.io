@@ -277,6 +277,75 @@ textarea{min-height:90px;resize:vertical}
 .empty p{font-size:15px}
 .loading{grid-column:1/-1;text-align:center;padding:70px;color:var(--text2);font-size:15px;font-weight:500}
 
+/* ── RANK BADGES ── */
+.rank-badge{font-size:10px;font-weight:800;padding:2px 7px;border-radius:20px;white-space:nowrap;letter-spacing:.3px}
+.rank-tourist{background:#fef3c7;color:#92400e}
+.rank-traveler{background:#dbeafe;color:#1e40af}
+.rank-backpacker{background:#ede9fe;color:#5b21b6}
+.rank-nomad{background:#fce7f3;color:#9d174d}
+.rank-adventurer{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#fff}
+.author-meta{display:flex;flex-direction:column;gap:1px}
+.a-posts{font-size:10px;color:var(--text2);font-weight:500}
+
+/* ── ADVANCED FILTER ── */
+.adv-filter{background:var(--bg2);border:1.5px solid var(--border);border-radius:14px;padding:12px 18px;margin-bottom:20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:var(--shadow)}
+.adv-filter label{font-size:12px;font-weight:700;color:var(--text2);white-space:nowrap}
+.adv-filter select{font-size:13px;font-weight:600;font-family:'Heebo',sans-serif;color:var(--text);background:var(--bg);border:1.5px solid var(--border);padding:7px 12px;border-radius:9px;cursor:pointer;outline:none;transition:.2s;min-width:130px}
+.adv-filter select:focus{border-color:var(--accent)}
+.adv-clear{font-size:12px;font-weight:600;color:var(--text2);background:none;border:1.5px solid var(--border);padding:6px 12px;border-radius:8px;cursor:pointer;transition:.2s;font-family:'Heebo',sans-serif}
+.adv-clear:hover{border-color:var(--closed);color:var(--closed)}
+.filter-count{font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-light);padding:3px 10px;border-radius:20px;margin-right:auto}
+
+/* ── AD BANNER ── */
+#ad-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center;padding:20px}
+#ad-backdrop.open{display:flex;animation:fadeIn .3s}
+.ad-modal{position:relative;max-width:400px;width:100%;border-radius:20px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:slideUp .35s var(--ease)}
+.ad-modal img{width:100%;display:block}
+.ad-close-btn{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.7);color:#fff;border:none;border-radius:50%;width:34px;height:34px;display:none;align-items:center;justify-content:center;cursor:pointer;font-size:20px;line-height:1;transition:.2s;z-index:10}
+.ad-close-btn.visible{display:flex}
+.ad-close-btn:hover{background:rgba(0,0,0,.95)}
+.ad-countdown{position:absolute;top:12px;left:12px;background:rgba(0,0,0,.65);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;font-family:'Heebo',sans-serif;pointer-events:none}
+
+/* ── ADMIN EXTENDED ── */
+.admin-section{margin-top:16px;border-top:1px solid var(--border);padding-top:14px}
+.admin-section h4{font-size:13px;font-weight:800;margin-bottom:10px;color:var(--text)}
+.admin-ad-form{display:flex;flex-direction:column;gap:8px}
+.admin-ad-form input{padding:9px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;font-family:'Heebo',sans-serif;outline:none;transition:.2s}
+.admin-ad-form input:focus{border-color:var(--accent)}
+.btn-save-ad{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:10px;border-radius:9px;font-size:13px;font-weight:700;font-family:'Heebo',sans-serif;cursor:pointer;transition:.2s}
+.btn-save-ad:hover{opacity:.9}
+.admin-add-admin{display:flex;gap:8px;margin-top:6px}
+.admin-add-admin input{flex:1;padding:9px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;font-family:'Heebo',sans-serif;outline:none;direction:rtl}
+.btn-add-admin{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;padding:9px 16px;border-radius:9px;font-size:13px;font-weight:700;font-family:'Heebo',sans-serif;cursor:pointer;white-space:nowrap}
+.admin-user-row .admin-badge{font-size:10px;font-weight:700;background:#7c3aed;color:#fff;padding:1px 6px;border-radius:6px;margin-right:4px}
+
+/* ── PROFILE MODAL ── */
+#profile-modal .modal{max-width:480px}
+.profile-header{display:flex;flex-direction:column;align-items:center;padding:28px 24px 20px;border-bottom:1px solid var(--border);text-align:center;gap:10px}
+.profile-pic-lg{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--accent)}
+.profile-name{font-size:20px;font-weight:900}
+.profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:20px 24px;border-bottom:1px solid var(--border)}
+.profile-stat{text-align:center}
+.profile-stat .num{font-size:22px;font-weight:900;color:var(--accent)}
+.profile-stat .lbl{font-size:11px;font-weight:600;color:var(--text2);margin-top:2px}
+.profile-locations{padding:14px 18px;display:flex;flex-direction:column;gap:8px;max-height:240px;overflow-y:auto}
+.profile-loc-item{display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:10px;cursor:pointer;transition:.2s}
+.profile-loc-item:hover{background:var(--accent-light)}
+.profile-loc-thumb{width:44px;height:44px;object-fit:cover;border-radius:8px;flex-shrink:0;background:var(--border)}
+.profile-loc-name{font-size:13px;font-weight:700}
+.profile-loc-likes{font-size:11px;color:var(--text2);margin-top:2px}
+.copyright-note{font-size:10px;color:var(--text2);text-align:center;padding:8px 20px 14px;opacity:.7;line-height:1.5}
+
+/* ── CARD SLIDESHOW ON HOVER ── */
+.card-imgs-wrap{position:relative;height:190px;overflow:hidden;flex-shrink:0;background:var(--accent-light)}
+.card-imgs-track{display:flex;height:100%;transition:transform .55s var(--ease)}
+.card-imgs-track .cis{flex:0 0 100%;height:100%;overflow:hidden}
+.card-imgs-track .cis img{width:100%;height:100%;object-fit:cover;transition:transform .55s}
+.card:hover .card-imgs-track .cis img{transform:scale(1.06)}
+.card-slide-dots{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:4px;z-index:5;pointer-events:none}
+.csd{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.5);transition:.3s}
+.csd.act{background:#fff;width:14px;border-radius:3px}
+
 @media(max-width:640px){
   .header-row1{padding:0 14px;gap:10px}
   .h-search{display:none}
@@ -364,6 +433,26 @@ textarea{min-height:90px;resize:vertical}
           הוספת מקום
         </button>
       </div>
+    </div>
+    <!-- Advanced filter -->
+    <div class="adv-filter" id="adv-filter">
+      <label>🔍 סינון מתקדם:</label>
+      <select id="adv-region" onchange="applyAdvFilter()">
+        <option value="">כל האזורים</option>
+        <option value="צפון">צפון</option>
+        <option value="מרכז">מרכז</option>
+        <option value="דרום">דרום</option>
+      </select>
+      <select id="adv-cat" onchange="applyAdvFilter()">
+        <option value="">כל הקטגוריות</option>
+      </select>
+      <select id="adv-paid" onchange="applyAdvFilter()">
+        <option value="">חינם + בתשלום</option>
+        <option value="free">חינם בלבד</option>
+        <option value="paid">בתשלום בלבד</option>
+      </select>
+      <button class="adv-clear" onclick="clearAdvFilter()">✕ נקה</button>
+      <span class="filter-count" id="filter-count" style="display:none"></span>
     </div>
     <div class="grid" id="grid"><div class="loading">טוען מקומות...</div></div>
   </div>
@@ -503,13 +592,35 @@ textarea{min-height:90px;resize:vertical}
   </div>
 </div>
 
+<!-- Profile Modal -->
+<div class="modal-backdrop" id="profile-modal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <span class="modal-ttl" id="profile-modal-title">פרופיל משתמש</span>
+      <button class="modal-x" onclick="closeModal('profile-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div id="profile-content"></div>
+  </div>
+</div>
+
+<!-- Ad Banner -->
+<div id="ad-backdrop">
+  <div class="ad-modal">
+    <a id="ad-link" href="#" target="_blank" rel="noopener">
+      <img id="ad-img" src="" alt="פרסומת">
+    </a>
+    <div class="ad-countdown" id="ad-countdown">3</div>
+    <button class="ad-close-btn" id="ad-close-btn" onclick="closeAd()">×</button>
+  </div>
+</div>
+
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
 const API = 'https://sound.pythonanywhere.com';
 const GOOGLE_CLIENT_ID = '426523025549-7c50rkn7cun4vmm2r802u0ij6egjehtg.apps.googleusercontent.com';
-const ADMIN_EMAIL = 'dhoc97909@gmail.com';
+let ADMIN_EMAILS = ['dhoc97909@gmail.com'];
 
 const CATS = [
   {id:'מסלולי הליכה', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 4a1 1 0 1 0 2 0 1 1 0 0 0-2 0"/><path d="m10.5 8.5 2 1.5L14 14l2.5 4"/><path d="m9.5 14 1-4 2.5 1"/><path d="m7 20 2.5-6"/></svg>'},
@@ -527,15 +638,62 @@ const REGIONS = ['צפון','מרכז','דרום'];
 let state = {
   user:null, token:null, locations:[],
   activeCat:'', activeRegion:'', searchQuery:'',
+  advRegion:'', advCat:'', advPaid:'',
   pickerMap:null, pickerMarker:null, cardMaps:{},
   userLat:null, userLng:null,
   editingId:null, lastCount:0,
+  cardSlideIntervals:{},
 };
 let isFirstContrib=false, searchTimer=null, pollTimer=null, currentStep=1;
+
+// ── Ad system ──
+let adData={img:'',link:'',enabled:false};
+let adTimer=null;
+function loadAdSettings(){
+  try{const s=localStorage.getItem('mtyalim_ad');if(s)adData=JSON.parse(s);}catch(e){}
+}
+function saveAdSettings(){localStorage.setItem('mtyalim_ad',JSON.stringify(adData));}
+function showAd(){
+  if(!adData.enabled||!adData.img)return;
+  const bd=document.getElementById('ad-backdrop');
+  document.getElementById('ad-img').src=adData.img;
+  const lnk=document.getElementById('ad-link');
+  if(adData.link){lnk.href=adData.link;lnk.target='_blank';}else{lnk.href='#';lnk.removeAttribute('target');}
+  const closebtn=document.getElementById('ad-close-btn');
+  const countdown=document.getElementById('ad-countdown');
+  closebtn.classList.remove('visible');
+  countdown.style.display='block';
+  let secs=3;
+  countdown.textContent=secs;
+  bd.classList.add('open');
+  const iv=setInterval(()=>{
+    secs--;
+    if(secs<=0){clearInterval(iv);countdown.style.display='none';closebtn.classList.add('visible');}
+    else countdown.textContent=secs;
+  },1000);
+}
+function closeAd(){document.getElementById('ad-backdrop').classList.remove('open');}
+function scheduleAd(){
+  if(adTimer)clearInterval(adTimer);
+  adTimer=setInterval(()=>showAd(),3600000);
+}
+document.getElementById('ad-backdrop').addEventListener('click',e=>{if(e.target===document.getElementById('ad-backdrop')){}});
+
+// ── Rank ──
+function getRank(posts){
+  if(posts>=500)return{label:'הרפתקן',cls:'rank-adventurer'};
+  if(posts>=200)return{label:'נווד',cls:'rank-nomad'};
+  if(posts>=100)return{label:'תרמילאי',cls:'rank-backpacker'};
+  if(posts>=30)return{label:'מטייל',cls:'rank-traveler'};
+  if(posts>1)return{label:'תייר',cls:'rank-tourist'};
+  return null;
+}
 
 document.addEventListener('DOMContentLoaded',()=>{
   buildCatNav();
   buildCatSelect();
+  buildAdvCatSelect();
+  loadAdSettings();
   const t=localStorage.getItem('mtyalim_token');
   if(t){state.token=t;verifyStoredToken(t);}
 });
@@ -609,11 +767,13 @@ async function verifyStoredToken(t){
   }catch(e){localStorage.removeItem('mtyalim_token');}
 }
 
+function isAdminUser(email){return ADMIN_EMAILS.includes(email);}
+
 function showUserArea(){
-  const isAdmin=state.user.email===ADMIN_EMAIL;
+  const isAdmin=isAdminUser(state.user.email);
   document.getElementById('user-area').innerHTML=`
-    <img class="user-pic" src="${state.user.picture||''}" alt="" onerror="this.style.display='none'">
-    <span class="user-name">${escHtml(state.user.name)}</span>
+    <img class="user-pic" src="${state.user.picture||''}" alt="" onerror="this.style.display='none'" style="cursor:pointer" onclick="openMyProfile()">
+    <span class="user-name" style="cursor:pointer" onclick="openMyProfile()">${escHtml(state.user.name)}</span>
     ${isAdmin?`<button class="btn-admin" onclick="openAdmin()">🛡️ מנהל</button>`:''}
     <button class="btn-out" onclick="signOut()">יציאה</button>`;
 }
@@ -651,6 +811,8 @@ function showApp(){
     navigator.geolocation.getCurrentPosition(p=>{state.userLat=p.coords.latitude;state.userLng=p.coords.longitude;},()=>{},{timeout:8000});
   }
   startPolling();
+  setTimeout(()=>showAd(),1500);
+  scheduleAd();
 }
 
 // ── Category Nav ──
@@ -666,6 +828,24 @@ function buildCatSelect(){
   const sel=document.getElementById('f-category');
   if(!sel)return;
   sel.innerHTML='<option value="">בחר קטגוריה</option>'+CATS.map(c=>`<option value="${escHtml(c.id)}">${escHtml(c.id)}</option>`).join('');
+}
+function buildAdvCatSelect(){
+  const sel=document.getElementById('adv-cat');
+  if(!sel)return;
+  sel.innerHTML='<option value="">כל הקטגוריות</option>'+CATS.map(c=>`<option value="${escHtml(c.id)}">${escHtml(c.id)}</option>`).join('');
+}
+function applyAdvFilter(){
+  state.advRegion=document.getElementById('adv-region').value;
+  state.advCat=document.getElementById('adv-cat').value;
+  state.advPaid=document.getElementById('adv-paid').value;
+  renderGrid();
+}
+function clearAdvFilter(){
+  document.getElementById('adv-region').value='';
+  document.getElementById('adv-cat').value='';
+  document.getElementById('adv-paid').value='';
+  state.advRegion='';state.advCat='';state.advPaid='';
+  renderGrid();
 }
 function setCat(btn,cat){
   document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
@@ -701,7 +881,16 @@ async function loadLocations(){
 
 function getSorted(){
   const s=document.getElementById('sort-select')?.value||'newest';
-  const locs=[...state.locations];
+  let locs=[...state.locations];
+  // Advanced filters (client-side)
+  if(state.advRegion)locs=locs.filter(l=>l.region===state.advRegion);
+  if(state.advCat)locs=locs.filter(l=>l.category===state.advCat);
+  if(state.advPaid==='free')locs=locs.filter(l=>!l.is_paid);
+  if(state.advPaid==='paid')locs=locs.filter(l=>l.is_paid);
+  // Update count badge
+  const hasFilter=state.advRegion||state.advCat||state.advPaid;
+  const fc=document.getElementById('filter-count');
+  if(fc){fc.style.display=hasFilter?'':'none';fc.textContent=`${locs.length} תוצאות`;}
   if(s==='liked')locs.sort((a,b)=>(b.like_count||0)-(a.like_count||0));
   else if(s==='nearest'&&state.userLat!==null)locs.sort((a,b)=>dist(a)-dist(b));
   return locs;
@@ -712,6 +901,9 @@ function catIcon(cat){const c=CATS.find(x=>x.id===cat);return c?c.icon:'';}
 
 function renderGrid(){
   const grid=document.getElementById('grid');
+  // Clear any running slide intervals
+  Object.values(state.cardSlideIntervals).forEach(iv=>clearInterval(iv));
+  state.cardSlideIntervals={};
   state.cardMaps={};
   const locs=getSorted();
   if(!locs.length){
@@ -720,6 +912,11 @@ function renderGrid(){
   }
   grid.innerHTML=locs.map(loc=>cardHTML(loc)).join('');
   locs.forEach(loc=>{if(loc.lat&&loc.lng&&!loc.image_url)initCardMap(loc);});
+  // Init slideshow hover on cards with multiple images
+  locs.forEach(loc=>{
+    const imgs=getImgs(loc);
+    if(imgs.length>1)initCardSlideshow(loc.id,imgs.length);
+  });
 }
 
 function getImgs(loc){if(!loc.image_url)return[];return loc.image_url.split(',').map(s=>s.trim()).filter(Boolean);}
@@ -732,20 +929,29 @@ function cardHTML(loc){
   const region=loc.region?`<span class="badge b-region">${escHtml(loc.region)}</span>`:'';
   let imgSection;
   if(imgs.length){
-    imgSection=`<div class="card-img"><img src="${imgSrc(imgs[0])}" alt="${escHtml(loc.name)}" loading="lazy">${imgs.length>1?`<span class="card-img-count">📷 ${imgs.length}</span>`:''}</div>`;
+    const slides=imgs.map((u,i)=>`<div class="cis"><img src="${imgSrc(u)}" alt="${escHtml(loc.name)}" loading="lazy"></div>`).join('');
+    const dots=imgs.length>1?`<div class="card-slide-dots">${imgs.map((_,i)=>`<span class="csd${i===0?' act':''}"></span>`).join('')}</div>`:'';
+    imgSection=`<div class="card-imgs-wrap" id="cwrap-${loc.id}">
+      <div class="card-imgs-track" id="ctrack-${loc.id}">${slides}</div>
+      ${dots}
+      ${imgs.length>1?`<span class="card-img-count">📷 ${imgs.length}</span>`:''}
+    </div>`;
   }else if(loc.lat&&loc.lng){
     imgSection=`<div class="card-img-map" id="cmap-${loc.id}"></div>`;
   }else{
     imgSection=`<div class="card-img-placeholder"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg></div>`;
   }
   const likedCls=loc.liked_by_me?'liked':'';
-  const isOwner=state.user&&(state.user.user_id===loc.user_id||state.user.email===ADMIN_EMAIL);
+  const isOwner=state.user&&(state.user.user_id===loc.user_id||isAdminUser(state.user.email));
   const ownerBtns=isOwner?`
     <button class="btn-edit" onclick="event.stopPropagation();openEdit(${loc.id})" title="עריכה"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
     <button class="btn-del" onclick="event.stopPropagation();deleteLocation(${loc.id})" title="מחיקה"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6M14 11v6"/></svg></button>`:'';
   const cat=loc.category?`<span class="card-cat">${catIcon(loc.category)} ${escHtml(loc.category)}</span>`:'';
   const desc=loc.description?`<div class="card-desc">${escHtml(loc.description)}</div>`:'';
   const addr=loc.address?`<div class="card-addr"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>${escHtml(loc.address)}</div>`:'';
+  const postCount=loc.user_loc_count||0;
+  const rank=getRank(postCount);
+  const rankHtml=rank?`<span class="rank-badge ${rank.cls}">${rank.label}</span>`:'';
   return `<div class="card" id="card-${loc.id}" onclick="openDetail(${loc.id})">
     ${imgSection}
     <div class="card-body">
@@ -753,7 +959,13 @@ function cardHTML(loc){
       <div class="card-badges">${status}${paid}${region}</div>
       ${cat}${desc}${addr}
       <div class="card-footer">
-        <div class="card-author"><img class="a-pic" src="${escHtml(loc.user_picture||'')}" alt="" onerror="this.style.display='none'"><span class="a-name">${escHtml(loc.user_name||'')}</span></div>
+        <div class="card-author" onclick="event.stopPropagation();openUserProfile(${loc.user_id})" style="cursor:pointer">
+          <img class="a-pic" src="${escHtml(loc.user_picture||'')}" alt="" onerror="this.style.display='none'">
+          <div class="author-meta">
+            <span class="a-name">${escHtml(loc.user_name||'')} ${rankHtml}</span>
+            <span class="a-posts">${postCount} פוסטים</span>
+          </div>
+        </div>
         <div class="card-acts">
           <button class="btn-like ${likedCls}" id="like-${loc.id}" onclick="event.stopPropagation();toggleLike(${loc.id})">
             <svg class="hrt" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -764,6 +976,28 @@ function cardHTML(loc){
       </div>
     </div>
   </div>`;
+}
+
+function initCardSlideshow(locId, imgCount){
+  const card=document.getElementById(`card-${locId}`);
+  const track=document.getElementById(`ctrack-${locId}`);
+  if(!card||!track||imgCount<2)return;
+  let cur=0;
+  function goSlide(n){
+    cur=n%imgCount;
+    track.style.transform=`translateX(${cur*100}%)`;
+    const dots=card.querySelectorAll('.csd');
+    dots.forEach((d,i)=>d.classList.toggle('act',i===cur));
+  }
+  card.addEventListener('mouseenter',()=>{
+    if(state.cardSlideIntervals[locId])return;
+    state.cardSlideIntervals[locId]=setInterval(()=>goSlide(cur+1),1600);
+  });
+  card.addEventListener('mouseleave',()=>{
+    clearInterval(state.cardSlideIntervals[locId]);
+    delete state.cardSlideIntervals[locId];
+    goSlide(0);
+  });
 }
 
 function initCardMap(loc){
@@ -788,8 +1022,12 @@ function openDetail(id){
   const region=loc.region?`<span class="badge b-region">${escHtml(loc.region)}</span>`:'';
   const cat=loc.category?`<span class="card-cat">${catIcon(loc.category)} ${escHtml(loc.category)}</span>`:'';
   const likedCls=loc.liked_by_me?'liked':'';
-  const isOwner=state.user&&(state.user.user_id===loc.user_id||state.user.email===ADMIN_EMAIL);
+  const isOwner=state.user&&(state.user.user_id===loc.user_id||isAdminUser(state.user.email));
+  const postCount=loc.user_loc_count||0;
+  const rank=getRank(postCount);
+  const rankHtml=rank?`<span class="rank-badge ${rank.cls}">${rank.label}</span>`:'';
 
+  // Gallery (always show if imgs exist)
   let topHTML='';
   if(imgs.length){
     const dots=imgs.length>1?`<div class="gallery-dots">${imgs.map((_,i)=>`<span class="${i===0?'act':''}" onclick="scrollGallery(${i})"></span>`).join('')}</div>`:'';
@@ -797,14 +1035,20 @@ function openDetail(id){
       <div class="gallery-scroll" id="gallery-scroll">${imgs.map(u=>`<img src="${imgSrc(u)}" alt="${escHtml(loc.name)}">`).join('')}</div>
       ${dots}
     </div>`;
-  }else if(loc.lat&&loc.lng){
-    topHTML=`<div class="detail-map-wrap" style="padding-top:56px"><div class="detail-map" id="dmap"></div></div>`;
+  }
+  // Map – always show if coordinates exist (below gallery or alone)
+  let mapHTML='';
+  if(loc.lat&&loc.lng){
+    if(imgs.length){
+      mapHTML=`<div class="detail-map-section" style="padding:14px 20px 0"><div class="detail-map" id="dmap"></div></div>`;
+    }else{
+      mapHTML=`<div class="detail-map-wrap" style="padding-top:56px"><div class="detail-map" id="dmap"></div></div>`;
+    }
   }
 
   const addrRow=loc.address?`<div class="d-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>${escHtml(loc.address)}</div>`:'';
   const hoursRow=loc.hours?`<div class="d-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${escHtml(loc.hours)}</div>`:'';
   const linkRow=loc.link?`<div class="d-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><a href="${escHtml(loc.link)}" target="_blank" rel="noopener">פתח קישור</a></div>`:'';
-
   const ownerActions=isOwner?`
     <button class="btn-edit-d" onclick="closeModal('detail-modal');openEdit(${loc.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> עריכה</button>
     <button class="btn-del-d" onclick="deleteLocation(${loc.id});closeModal('detail-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg> מחיקה</button>`:'';
@@ -815,11 +1059,19 @@ function openDetail(id){
       <button class="modal-x" style="background:rgba(0,0,0,.45);color:#fff;border:none;backdrop-filter:blur(4px)" onclick="closeModal('detail-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     ${topHTML}
+    ${mapHTML}
     <div class="d-body">
       <div class="d-header"><span class="d-name">${escHtml(loc.name)}</span></div>
-      <div class="d-meta">${status}${paid}${region}${cat}<span style="font-size:12px;color:var(--text2);margin-right:auto">נוסף ע"י ${escHtml(loc.user_name||'')}</span></div>
+      <div class="d-meta">${status}${paid}${region}${cat}</div>
       ${loc.description?`<div class="d-desc">${escHtml(loc.description)}</div>`:''}
       <div style="display:flex;flex-direction:column;gap:10px">${addrRow}${hoursRow}${linkRow}</div>
+      <div class="d-row" style="cursor:pointer" onclick="openUserProfile(${loc.user_id})">
+        <img src="${escHtml(loc.user_picture||'')}" style="width:28px;height:28px;border-radius:50%;object-fit:cover" onerror="this.style.display='none'" alt="">
+        <div>
+          <span style="font-weight:700">${escHtml(loc.user_name||'')} ${rankHtml}</span>
+          <span style="font-size:11px;color:var(--text2);margin-right:6px">${postCount} פוסטים</span>
+        </div>
+      </div>
       <div class="d-actions">
         <button class="btn-lk-lg ${likedCls}" id="dlk-${loc.id}" onclick="toggleLike(${loc.id})">
           <svg class="hrt" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -828,10 +1080,12 @@ function openDetail(id){
         ${loc.link?`<a class="btn-goto" href="${escHtml(loc.link)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>כניסה למקום</a>`:''}
         ${ownerActions}
       </div>
+      <div class="copyright-note">📸 התמונות באתר זה מוגנות בזכויות יוצרים בהתאם לסעיף 27א לחוק זכויות יוצרים, תשס"ח-2007</div>
     </div>`;
 
   document.getElementById('detail-modal').classList.add('open');
-  if(!imgs.length&&loc.lat&&loc.lng){
+  // Always init map if coords exist
+  if(loc.lat&&loc.lng){
     setTimeout(()=>{
       const el=document.getElementById('dmap');
       if(!el)return;
@@ -1067,7 +1321,55 @@ async function submitLocation(){
 }
 function showFormErr(msg){const el=document.getElementById('form-error');el.textContent=msg;el.style.display='block';}
 
-// ── Admin ──
+// ── Profile ──
+function openMyProfile(){
+  if(state.user)openUserProfile(state.user.user_id);
+}
+async function openUserProfile(userId){
+  document.getElementById('profile-modal').classList.add('open');
+  document.getElementById('profile-content').innerHTML='<div style="padding:40px;text-align:center">טוען...</div>';
+  try{
+    const data=await apiFetch(`/api/user/${userId}/profile`,'GET');
+    const rank=getRank(data.loc_count||0);
+    const rankHtml=rank?`<span class="rank-badge ${rank.cls}" style="font-size:12px;padding:3px 10px">${rank.label}</span>`:'<span style="font-size:12px;color:var(--text2)">עדיין ללא תגית</span>';
+    const nextRank=getNextRank(data.loc_count||0);
+    const isMe=state.user&&state.user.user_id===userId;
+    document.getElementById('profile-content').innerHTML=`
+      <div class="profile-header">
+        <img class="profile-pic-lg" src="${escHtml(data.picture||'')}" alt="" onerror="this.style.display='none'">
+        <div class="profile-name">${escHtml(data.name||'')} ${isMe?'<span style="font-size:12px;color:var(--text2)">(אני)</span>':''}</div>
+        ${rankHtml}
+        ${nextRank?`<div style="font-size:11px;color:var(--text2)">עוד ${nextRank.left} פוסטים לתגית: <b>${nextRank.label}</b></div>`:'<div style="font-size:11px;color:var(--accent)">🏆 דרגה מקסימלית!</div>'}
+      </div>
+      <div class="profile-stats">
+        <div class="profile-stat"><div class="num">${data.loc_count||0}</div><div class="lbl">מיקומים</div></div>
+        <div class="profile-stat"><div class="num">${data.total_likes||0}</div><div class="lbl">לייקים</div></div>
+        <div class="profile-stat"><div class="num">${data.total_liked_given||0}</div><div class="lbl">לייקים נתן</div></div>
+      </div>
+      <div style="padding:10px 18px 4px;font-size:12px;font-weight:700;color:var(--text2)">מיקומים שפרסם:</div>
+      <div class="profile-locations">
+        ${(data.locations||[]).length===0?'<div style="text-align:center;color:var(--text2);padding:20px">עדיין לא פרסם מיקומים</div>':
+          (data.locations||[]).map(l=>{
+            const thumb=l.image_url?(l.image_url.split(',')[0].trim()):'';
+            return `<div class="profile-loc-item" onclick="closeModal('profile-modal');openDetail(${l.id})">
+              ${thumb?`<img class="profile-loc-thumb" src="${imgSrc(thumb)}" alt="">`:'<div class="profile-loc-thumb" style="background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:20px">📍</div>'}
+              <div><div class="profile-loc-name">${escHtml(l.name)}</div><div class="profile-loc-likes">❤️ ${l.like_count||0} לייקים</div></div>
+            </div>`;
+          }).join('')}
+      </div>
+      <div class="copyright-note">📸 תמונות מוגנות לפי סעיף 27א לחוק זכויות יוצרים, תשס"ח-2007</div>`;
+  }catch(e){document.getElementById('profile-content').innerHTML=`<div style="padding:20px">שגיאה: ${e.message}</div>`;}
+}
+function getNextRank(posts){
+  const ranks=[{min:2,label:'תייר'},{min:30,label:'מטייל'},{min:100,label:'תרמילאי'},{min:200,label:'נווד'},{min:500,label:'הרפתקן'}];
+  for(const r of ranks){if(posts<r.min)return{label:r.label,left:r.min-posts};}
+  return null;
+}
+document.getElementById('profile-modal').addEventListener('click',e=>{if(e.target===document.getElementById('profile-modal'))closeModal('profile-modal');});
+
+// Load extra admins from localStorage
+(function(){try{const a=localStorage.getItem('mtyalim_admins');if(a){const arr=JSON.parse(a);arr.forEach(e=>{if(!ADMIN_EMAILS.includes(e))ADMIN_EMAILS.push(e);});}}catch(e){}})();
+
 async function openAdmin(){
   document.getElementById('admin-modal').classList.add('open');
   document.getElementById('admin-body').innerHTML='<div style="padding:20px;text-align:center">טוען...</div>';
@@ -1079,14 +1381,74 @@ async function openAdmin(){
         <div class="stat-card"><div class="num">${data.locations}</div><div class="lbl">מקומות</div></div>
         <div class="stat-card"><div class="num">${data.likes}</div><div class="lbl">לייקים</div></div>
       </div>
-      <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--text2)">משתמשים מובילים</div>
-      ${data.top_users.map(u=>`<div class="admin-user-row">
-        <img src="${escHtml(u.picture||'')}" alt="" onerror="this.style.display='none'" style="width:32px;height:32px;border-radius:50%;object-fit:cover">
-        <div class="info"><b>${escHtml(u.name||'')}</b><small>${escHtml(u.email||'')}</small></div>
-        <span class="cnt">${u.loc_count} מקומות</span>
-      </div>`).join('')}`;
-  }catch(e){document.getElementById('admin-body').innerHTML='<div style="padding:20px">שגיאה בטעינת נתונים</div>';}
+      <div class="admin-section">
+        <h4>📋 כל המשתמשים (${(data.all_users||data.top_users||[]).length})</h4>
+        ${(data.all_users||data.top_users||[]).map(u=>{
+          const isAdm=ADMIN_EMAILS.includes(u.email);
+          return `<div class="admin-user-row">
+            <img src="${escHtml(u.picture||'')}" alt="" onerror="this.style.display='none'" style="width:32px;height:32px;border-radius:50%;object-fit:cover">
+            <div class="info"><b>${escHtml(u.name||'')}${isAdm?'<span class="admin-badge"> מנהל</span>':''}</b><small>${escHtml(u.email||'')} · ${u.is_google?'Google':'אימייל'}</small></div>
+            <span class="cnt">${u.loc_count} מקומות</span>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="admin-section">
+        <h4>🛡️ הוספת מנהל נוסף</h4>
+        <div class="admin-add-admin">
+          <input type="email" id="new-admin-email" placeholder="אימייל משתמש קיים" dir="ltr">
+          <button class="btn-add-admin" onclick="addAdmin()">הוסף</button>
+        </div>
+      </div>
+      <div class="admin-section">
+        <h4>📢 ניהול פרסומת</h4>
+        <div class="admin-ad-form">
+          <label style="font-size:12px;font-weight:700;color:var(--text2)">קישור לתמונת הפרסומת (URL)</label>
+          <input type="url" id="ad-img-input" placeholder="https://..." value="${escHtml(adData.img||'')}">
+          <label style="font-size:12px;font-weight:700;color:var(--text2)">קישור ללחיצה (אופציונלי)</label>
+          <input type="url" id="ad-link-input" placeholder="https://..." value="${escHtml(adData.link||'')}">
+          <div style="display:flex;align-items:center;gap:10px;margin-top:2px">
+            <label class="toggle" style="flex-shrink:0">
+              <input type="checkbox" id="ad-enabled" ${adData.enabled?'checked':''}>
+              <span class="toggle-tr"></span>
+              <span class="toggle-th"></span>
+            </label>
+            <span style="font-size:13px;font-weight:600">הפרסומת פעילה</span>
+          </div>
+          <button class="btn-save-ad" onclick="saveAd()">💾 שמור הגדרות</button>
+          <button class="btn-save-ad" style="background:var(--bg);color:var(--text);border:1.5px solid var(--border)" onclick="testAd()">👁️ תצוגה מקדימה</button>
+        </div>
+      </div>`;
+  }catch(e){document.getElementById('admin-body').innerHTML=`<div style="padding:20px">שגיאה: ${e.message}</div>`;}
 }
+
+function saveAd(){
+  adData.img=(document.getElementById('ad-img-input')?.value||'').trim();
+  adData.link=(document.getElementById('ad-link-input')?.value||'').trim();
+  adData.enabled=document.getElementById('ad-enabled')?.checked||false;
+  saveAdSettings();
+  showToast('✅ הגדרות פרסומת נשמרו');
+}
+function testAd(){
+  const img=(document.getElementById('ad-img-input')?.value||'').trim();
+  const link=(document.getElementById('ad-link-input')?.value||'').trim();
+  if(!img){showToast('נא להכניס קישור לתמונה');return;}
+  const prev={...adData};
+  adData={img,link,enabled:true};
+  showAd();
+  adData=prev;
+}
+function addAdmin(){
+  const email=(document.getElementById('new-admin-email')?.value||'').trim();
+  if(!email){showToast('נא להכניס אימייל');return;}
+  if(!ADMIN_EMAILS.includes(email)){
+    ADMIN_EMAILS.push(email);
+    localStorage.setItem('mtyalim_admins',JSON.stringify(ADMIN_EMAILS));
+    showToast(`✅ ${email} הוסף כמנהל`);
+    const inp=document.getElementById('new-admin-email');
+    if(inp)inp.value='';
+  }else{showToast('המשתמש כבר מנהל');}
+}
+
 document.getElementById('admin-modal').addEventListener('click',e=>{if(e.target===document.getElementById('admin-modal'))closeModal('admin-modal');});
 
 // ── Polling for new locations ──
