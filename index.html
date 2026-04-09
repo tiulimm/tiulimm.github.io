@@ -287,6 +287,33 @@ textarea{min-height:90px;resize:vertical}
 .author-meta{display:flex;flex-direction:column;gap:1px}
 .a-posts{font-size:10px;color:var(--text2);font-weight:500}
 
+/* ── REVIEWS ── */
+.reviews-section{border-top:1px solid var(--border);padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+.reviews-title{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px}
+.reviews-empty{font-size:13px;color:var(--text2);text-align:center;padding:10px 0}
+.review-item{background:var(--bg);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;border:1.5px solid var(--border)}
+.review-author{display:flex;align-items:center;gap:8px}
+.review-author img{width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0}
+.review-author-name{font-size:12px;font-weight:700;color:var(--text)}
+.review-author-date{font-size:11px;color:var(--text2);margin-right:auto}
+.review-text{font-size:14px;color:var(--text);line-height:1.6}
+.review-form{display:flex;flex-direction:column;gap:8px;background:var(--bg);border-radius:12px;padding:14px;border:1.5px solid var(--border)}
+.review-form-title{font-size:13px;font-weight:700;color:var(--text2)}
+.review-form textarea{min-height:76px;resize:vertical;padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-size:13px;font-family:'Heebo',sans-serif;outline:none;transition:.2s;width:100%}
+.review-form textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.btn-review-submit{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:8px 18px;border-radius:9px;font-size:13px;font-weight:700;font-family:'Heebo',sans-serif;cursor:pointer;align-self:flex-end;transition:.2s}
+.btn-review-submit:hover{opacity:.9}
+.btn-review-submit:disabled{opacity:.55;cursor:not-allowed}
+/* admin review cards */
+.admin-review-card{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.admin-review-meta{font-size:12px;color:var(--text2);font-weight:600}
+.admin-review-text{font-size:13px;color:var(--text);line-height:1.55}
+.admin-review-actions{display:flex;gap:8px}
+.btn-approve{background:var(--open-bg);color:var(--open);border:1.5px solid var(--open);padding:5px 14px;border-radius:8px;font-size:12px;font-weight:700;font-family:'Heebo',sans-serif;cursor:pointer;transition:.2s}
+.btn-approve:hover{background:var(--open);color:#fff}
+.btn-reject{background:var(--closed-bg);color:var(--closed);border:1.5px solid var(--closed);padding:5px 14px;border-radius:8px;font-size:12px;font-weight:700;font-family:'Heebo',sans-serif;cursor:pointer;transition:.2s}
+.btn-reject:hover{background:var(--closed);color:#fff}
+
 /* ── ADVANCED FILTER ── */
 .adv-filter {
   display: flex;
@@ -1110,7 +1137,7 @@ function openDetail(id){
   const rank=getRank(postCount);
   const rankHtml=rank?`<span class="rank-badge ${rank.cls}">${rank.label}</span>`:'';
 
-  // Gallery (always show if imgs exist)
+  // Gallery – always show if images exist
   let topHTML='';
   if(imgs.length){
     const dots=imgs.length>1?`<div class="gallery-dots">${imgs.map((_,i)=>`<span class="${i===0?'act':''}" onclick="scrollGallery(${i})"></span>`).join('')}</div>`:'';
@@ -1119,16 +1146,12 @@ function openDetail(id){
       ${dots}
     </div>`;
   }
-  // Map – always show if coordinates exist (below gallery or alone)
+  // Map – always show if coordinates exist, always below gallery (or with padding for close btn)
   let mapHTML='';
   if(loc.lat&&loc.lng){
-    if(imgs.length){
-      mapHTML=`<div class="detail-map-section" style="padding:14px 20px 0"><div class="detail-map" id="dmap"></div></div>`;
-    }else{
-      mapHTML=`<div class="detail-map-wrap" style="padding-top:56px"><div class="detail-map" id="dmap"></div></div>`;
-    }
+    const pt=imgs.length?'14px':'56px';
+    mapHTML=`<div style="padding:${pt} 20px 0"><div class="detail-map" id="dmap"></div></div>`;
   }
-
   const addrRow=loc.address?`<div class="d-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>${escHtml(loc.address)}</div>`:'';
   const hoursRow=loc.hours?`<div class="d-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${escHtml(loc.hours)}</div>`:'';
   const linkRow=loc.link?`<div class="d-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><a href="${escHtml(loc.link)}" target="_blank" rel="noopener">פתח קישור</a></div>`:'';
@@ -1164,9 +1187,24 @@ function openDetail(id){
         ${ownerActions}
       </div>
       <div class="copyright-note">📸 התמונות באתר זה מוגנות בזכויות יוצרים בהתאם לסעיף 27א לחוק זכויות יוצרים, תשס"ח-2007</div>
+    </div>
+    <div class="reviews-section">
+      <div class="reviews-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        חוויות מהמקום
+      </div>
+      <div id="reviews-list-${loc.id}"><div style="font-size:13px;color:var(--text2);text-align:center;padding:8px 0">טוען...</div></div>
+      ${state.token?`
+      <div class="review-form">
+        <div class="review-form-title">ספר למנהלים על החוויה שלך</div>
+        <textarea id="review-textarea-${loc.id}" placeholder="כתוב כאן את הביקורת שלך. המנהל יאשר אותה לפני הצגה לכולם..."></textarea>
+        <button class="btn-review-submit" id="review-submit-btn-${loc.id}" onclick="submitReview(${loc.id})">שלח לאישור</button>
+      </div>`:`<div class="reviews-empty">התחבר כדי לשתף חוויה</div>`}
     </div>`;
 
   document.getElementById('detail-modal').classList.add('open');
+  loadReviews(loc.id);
+  // Always init map if coords exist
   // Always init map if coords exist
   if(loc.lat&&loc.lng){
     setTimeout(()=>{
@@ -1193,6 +1231,87 @@ function onGalleryScroll(){
 function scrollGallery(i){
   const gs=document.getElementById('gallery-scroll');
   if(gs)gs.scrollTo({left:i*gs.offsetWidth,behavior:'smooth'});
+}
+
+
+// ── Reviews ──
+async function loadReviews(locId){
+  const el=document.getElementById('reviews-list-'+locId);
+  if(!el)return;
+  try{
+    const reviews=await apiFetch('/api/locations/'+locId+'/reviews','GET');
+    if(!reviews.length){
+      el.innerHTML='<div class="reviews-empty">אין חוויות עדיין. היה הראשון לשתף!</div>';
+      return;
+    }
+    el.innerHTML=reviews.map(r=>`
+      <div class="review-item">
+        <div class="review-author">
+          <img src="${escHtml(r.user_picture||'')}" onerror="this.style.display='none'" alt="">
+          <span class="review-author-name">${escHtml(r.user_name||'')}</span>
+          <span class="review-author-date">${new Date(r.created_at).toLocaleDateString('he-IL')}</span>
+        </div>
+        <div class="review-text">${escHtml(r.text)}</div>
+      </div>`).join('');
+  }catch(e){
+    el.innerHTML='<div class="reviews-empty">שגיאה בטעינת חוויות</div>';
+  }
+}
+
+async function submitReview(locId){
+  const ta=document.getElementById('review-textarea-'+locId);
+  const btn=document.getElementById('review-submit-btn-'+locId);
+  if(!ta||!btn)return;
+  const text=ta.value.trim();
+  if(!text){showToast('נא לכתוב משהו לפני השליחה');return;}
+  btn.disabled=true;btn.textContent='שולח...';
+  try{
+    await apiFetch('/api/locations/'+locId+'/reviews','POST',{text});
+    ta.value='';
+    showToast('✅ הביקורת נשלחה לאישור המנהל');
+  }catch(e){showToast('שגיאה: '+e.message);}
+  finally{btn.disabled=false;btn.textContent='שלח לאישור';}
+}
+
+async function approveReview(reviewId){
+  try{
+    await apiFetch('/api/reviews/'+reviewId+'/approve','PUT');
+    showToast('✅ הביקורת אושרה');
+    openAdmin();
+  }catch(e){showToast('שגיאה: '+e.message);}
+}
+async function deleteReview(reviewId){
+  try{
+    await apiFetch('/api/reviews/'+reviewId,'DELETE');
+    showToast('🗑️ הביקורת נמחקה');
+    openAdmin();
+  }catch(e){showToast('שגיאה: '+e.message);}
+}
+
+async function loadPendingReviews(){
+  const el=document.getElementById('admin-reviews-list');
+  if(!el)return;
+  try{
+    const reviews=await apiFetch('/api/admin/reviews','GET');
+    if(!reviews.length){
+      el.innerHTML='<div style="font-size:13px;color:var(--text2);padding:8px 0">אין ביקורות ממתינות לאישור</div>';
+      return;
+    }
+    el.innerHTML=reviews.map(r=>`
+      <div class="admin-review-card">
+        <div class="admin-review-meta">
+          <b>${escHtml(r.user_name||'')}</b> על <b>${escHtml(r.location_name||'')}</b>
+          &nbsp;·&nbsp; ${new Date(r.created_at).toLocaleDateString('he-IL')}
+        </div>
+        <div class="admin-review-text">${escHtml(r.text)}</div>
+        <div class="admin-review-actions">
+          <button class="btn-approve" onclick="approveReview(${r.id})">✓ אשר לפרסום</button>
+          <button class="btn-reject" onclick="deleteReview(${r.id})">✕ מחק</button>
+        </div>
+      </div>`).join('');
+  }catch(e){
+    el.innerHTML='<div style="font-size:13px;color:var(--text2)">שגיאה בטעינת ביקורות</div>';
+  }
 }
 
 // ── Like ──
@@ -1527,7 +1646,11 @@ async function openAdmin(){
           <button class="btn-save-ad" onclick="saveAd()">💾 שמור הגדרות</button>
           <button class="btn-save-ad" style="background:var(--bg);color:var(--text);border:1.5px solid var(--border)" onclick="testAd()">👁️ תצוגה מקדימה</button>
         </div>
+      <div class="admin-section" id="admin-reviews-section">
+        <h4>💬 ביקורות ממתינות לאישור</h4>
+        <div id="admin-reviews-list"><div style="font-size:13px;color:var(--text2);padding:8px 0">טוען...</div></div>
       </div>`;
+  loadPendingReviews();
   }catch(e){document.getElementById('admin-body').innerHTML=`<div style="padding:20px">שגיאה: ${e.message}</div>`;}
 }
 
