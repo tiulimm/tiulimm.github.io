@@ -3,287 +3,200 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>מקומות שווים לטיול</title>
+<title>מטיילים</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   :root {
-    --bg: #f7f6f3;
-    --bg2: #ffffff;
-    --border: #e2e0da;
-    --text: #1a1917;
-    --text2: #6b6963;
-    --accent: #1a1917;
-    --accent-light: #f0ede6;
-    --open: #1a6b3c;
-    --open-bg: #e6f4ec;
-    --closed: #8b2020;
-    --closed-bg: #faeaea;
+    --bg: #f5f4f0; --bg2: #ffffff; --border: #e2e0da;
+    --text: #1a1917; --text2: #6b6963;
+    --accent: #2d6a4f; --accent2: #40916c; --accent-light: #d8f3dc;
+    --open: #1a6b3c; --open-bg: #e6f4ec;
+    --closed: #8b2020; --closed-bg: #faeaea;
     --like: #c0392b;
-    --radius: 12px;
-    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+    --radius: 14px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.07), 0 0 1px rgba(0,0,0,0.05);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.13);
     --transition: 0.18s ease;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #111110;
-      --bg2: #1c1c1a;
-      --border: #2e2e2b;
-      --text: #f0ede6;
-      --text2: #8c8a84;
-      --accent: #f0ede6;
-      --accent-light: #252523;
-      --open: #4ade80;
-      --open-bg: #0f2e1a;
-      --closed: #f87171;
-      --closed-bg: #2e0f0f;
+      --bg:#111110;--bg2:#1c1c1a;--border:#2e2e2b;
+      --text:#f0ede6;--text2:#8c8a84;
+      --accent:#52b788;--accent2:#74c69d;--accent-light:#1b3a2d;
+      --open:#4ade80;--open-bg:#0f2e1a;--closed:#f87171;--closed-bg:#2e0f0f;
     }
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-         background: var(--bg); color: var(--text); min-height: 100vh; direction: rtl; }
-  a { color: inherit; }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html,body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:var(--bg);color:var(--text);min-height:100vh;direction:rtl;
+    overflow-x:hidden;max-width:100vw;
+  }
+  a{color:inherit;}img{max-width:100%;}
 
-  header {
-    background: var(--bg2);
-    border-bottom: 1px solid var(--border);
-    position: sticky; top: 0; z-index: 100;
-  }
-  .header-inner {
-    max-width: 1200px; margin: 0 auto;
-    padding: 0 24px;
-    height: 60px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .site-name { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; color: var(--text); }
-  .user-area { display: flex; align-items: center; gap: 12px; }
-  .user-pic { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
-  .user-name { font-size: 14px; color: var(--text2); }
-  .btn-sign-out {
-    font-size: 13px; color: var(--text2);
-    background: none; border: 1px solid var(--border);
-    padding: 5px 12px; border-radius: 8px; cursor: pointer;
-    transition: var(--transition);
-  }
-  .btn-sign-out:hover { border-color: var(--text2); color: var(--text); }
+  /* Header */
+  header{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+  .header-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+  .logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800;letter-spacing:-0.5px;color:var(--text);text-decoration:none;flex-shrink:0;}
+  .logo-icon{width:34px;height:34px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+  .logo-icon svg{width:18px;height:18px;fill:white;}
+  .header-search{flex:1;max-width:380px;display:flex;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:0 12px;gap:8px;transition:var(--transition);}
+  .header-search:focus-within{border-color:var(--accent);}
+  .header-search svg{width:16px;height:16px;color:var(--text2);flex-shrink:0;}
+  .header-search input{border:none;background:none;outline:none;font-size:14px;color:var(--text);width:100%;padding:9px 0;direction:rtl;font-family:inherit;}
+  .header-search input::placeholder{color:var(--text2);}
+  .user-area{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+  .user-pic{width:32px;height:32px;border-radius:50%;object-fit:cover;border:2px solid var(--border);}
+  .user-name{font-size:13px;color:var(--text2);}
+  .btn-sign-out{font-size:12px;color:var(--text2);background:none;border:1px solid var(--border);padding:5px 12px;border-radius:8px;cursor:pointer;transition:var(--transition);}
+  .btn-sign-out:hover{border-color:var(--text2);color:var(--text);}
 
-  #auth-wall {
-    min-height: 100vh; display: flex; align-items: center; justify-content: center;
-    padding: 24px;
-  }
-  .auth-card {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 20px; padding: 48px 40px;
-    max-width: 420px; width: 100%; text-align: center;
-    box-shadow: var(--shadow);
-  }
-  .auth-card h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
-  .auth-card p { color: var(--text2); margin-bottom: 32px; font-size: 15px; line-height: 1.6; }
-  #google-btn { display: flex; justify-content: center; min-height: 44px; }
+  /* Auth */
+  #auth-wall{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .auth-card{background:var(--bg2);border:1px solid var(--border);border-radius:24px;padding:52px 44px;max-width:440px;width:100%;text-align:center;box-shadow:var(--shadow-lg);}
+  .auth-logo{width:56px;height:56px;background:var(--accent);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;}
+  .auth-logo svg{width:28px;height:28px;fill:white;}
+  .auth-card h1{font-size:28px;font-weight:800;margin-bottom:10px;letter-spacing:-0.6px;}
+  .auth-card p{color:var(--text2);margin-bottom:32px;font-size:15px;line-height:1.65;}
+  #google-btn{display:flex;justify-content:center;min-height:44px;}
 
-  #contribute-wall {
-    min-height: 80vh; display: none; align-items: center; justify-content: center;
-    padding: 24px;
-  }
-  .contribute-card {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 20px; padding: 48px 40px;
-    max-width: 480px; width: 100%; text-align: center;
-    box-shadow: var(--shadow);
-  }
-  .contribute-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
-  .contribute-card p { color: var(--text2); margin-bottom: 28px; font-size: 15px; line-height: 1.6; }
+  /* Contribute */
+  #contribute-wall{min-height:80vh;display:none;align-items:center;justify-content:center;padding:24px;}
+  .contribute-card{background:var(--bg2);border:1px solid var(--border);border-radius:24px;padding:52px 44px;max-width:500px;width:100%;text-align:center;box-shadow:var(--shadow-lg);}
+  .contribute-card h2{font-size:24px;font-weight:800;margin-bottom:12px;}
+  .contribute-card p{color:var(--text2);margin-bottom:28px;font-size:15px;line-height:1.65;}
 
-  #app { display: none; }
-  .app-inner { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+  /* App */
+  #app{display:none;}
+  .app-inner{max-width:1200px;margin:0 auto;padding:28px 24px;}
+  .toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
+  .toolbar-title{font-size:22px;font-weight:800;flex:1;letter-spacing:-0.4px;}
+  .toolbar-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .sort-select{font-size:13px;color:var(--text);background:var(--bg2);border:1px solid var(--border);padding:8px 14px;border-radius:10px;cursor:pointer;outline:none;font-family:inherit;transition:var(--transition);direction:rtl;}
+  .sort-select:focus{border-color:var(--accent);}
+  .btn-add{background:var(--accent);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:var(--transition);white-space:nowrap;display:flex;align-items:center;gap:6px;}
+  .btn-add:hover{background:var(--accent2);}
+  .btn-add svg{width:16px;height:16px;stroke:white;fill:none;}
 
-  .toolbar {
-    display: flex; align-items: center; gap: 12px;
-    flex-wrap: wrap; margin-bottom: 28px;
-  }
-  .toolbar-title { font-size: 22px; font-weight: 700; flex: 1; min-width: 200px; letter-spacing: -0.4px; }
-  .btn-add {
-    background: var(--accent); color: var(--bg2);
-    border: none; padding: 10px 20px; border-radius: 10px;
-    font-size: 14px; font-weight: 600; cursor: pointer;
-    transition: var(--transition); white-space: nowrap;
-  }
-  .btn-add:hover { opacity: 0.85; }
+  /* Filters */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
+  .filter-pill{font-size:13px;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);cursor:pointer;transition:var(--transition);white-space:nowrap;}
+  .filter-pill:hover{border-color:var(--accent);color:var(--accent);}
+  .filter-pill.active{background:var(--accent);color:white;border-color:var(--accent);}
 
-  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
-  .filter-pill {
-    font-size: 13px; padding: 6px 14px; border-radius: 20px;
-    border: 1px solid var(--border); background: var(--bg2);
-    color: var(--text2); cursor: pointer; transition: var(--transition);
-    white-space: nowrap;
-  }
-  .filter-pill:hover { border-color: var(--text2); color: var(--text); }
-  .filter-pill.active { background: var(--accent); color: var(--bg2); border-color: var(--accent); }
+  /* Grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:var(--transition);display:flex;flex-direction:column;cursor:pointer;}
+  .card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);}
+  .card-img{height:180px;overflow:hidden;position:relative;flex-shrink:0;background:var(--accent-light);}
+  .card-img img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease;}
+  .card:hover .card-img img{transform:scale(1.04);}
+  .card-img-map{height:180px;position:relative;flex-shrink:0;}
+  .card-img-map .leaflet-container{height:100%;width:100%;}
+  .card-img-placeholder{height:180px;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:13px;background:var(--accent-light);flex-shrink:0;}
+  .card-body{padding:16px;flex:1;display:flex;flex-direction:column;gap:8px;}
+  .card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+  .card-name{font-size:15px;font-weight:700;line-height:1.3;}
+  .status-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+  .status-open{color:var(--open);background:var(--open-bg);}
+  .status-closed{color:var(--closed);background:var(--closed-bg);}
+  .card-category{display:inline-block;font-size:11px;color:var(--accent);background:var(--accent-light);padding:3px 10px;border-radius:6px;align-self:flex-start;font-weight:600;}
+  .card-desc{font-size:13px;color:var(--text2);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .card-address{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px;}
+  .card-address svg{width:12px;height:12px;flex-shrink:0;}
+  .card-footer{margin-top:auto;padding-top:10px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+  .card-author{display:flex;align-items:center;gap:6px;}
+  .author-pic{width:22px;height:22px;border-radius:50%;object-fit:cover;}
+  .author-name{font-size:11px;color:var(--text2);}
+  .card-actions{display:flex;align-items:center;gap:6px;}
+  .btn-like{display:flex;align-items:center;gap:4px;background:none;border:1px solid var(--border);padding:4px 10px;border-radius:8px;cursor:pointer;font-size:12px;color:var(--text2);transition:var(--transition);}
+  .btn-like:hover{border-color:var(--like);color:var(--like);}
+  .btn-like.liked{background:#fef2f2;border-color:var(--like);color:var(--like);}
+  .btn-like .heart{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;transition:var(--transition);}
+  .btn-like.liked .heart{fill:var(--like);}
+  .btn-delete{background:none;border:none;cursor:pointer;color:var(--text2);padding:4px;transition:var(--transition);border-radius:6px;}
+  .btn-delete:hover{color:var(--closed);background:var(--closed-bg);}
+  .btn-delete svg{width:14px;height:14px;}
 
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
-  }
-  .card {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: var(--radius); overflow: hidden;
-    box-shadow: var(--shadow); transition: var(--transition);
-    display: flex; flex-direction: column;
-  }
-  .card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-  .card-map { height: 160px; background: #e8e6e0; position: relative; flex-shrink: 0; }
-  .card-map .leaflet-container { height: 100%; width: 100%; border-radius: 0; }
-  .card-map-placeholder {
-    height: 100%; display: flex; align-items: center; justify-content: center;
-    color: var(--text2); font-size: 13px; background: var(--accent-light);
-  }
-  .card-body { padding: 18px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
-  .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-  .card-name { font-size: 16px; font-weight: 700; line-height: 1.3; }
-  .status-badge {
-    font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px;
-    white-space: nowrap; flex-shrink: 0;
-  }
-  .status-open { color: var(--open); background: var(--open-bg); }
-  .status-closed { color: var(--closed); background: var(--closed-bg); }
-  .card-category {
-    display: inline-block; font-size: 12px; color: var(--text2);
-    background: var(--accent-light); padding: 3px 10px; border-radius: 6px;
-    align-self: flex-start;
-  }
-  .card-desc { font-size: 14px; color: var(--text2); line-height: 1.6; }
-  .card-address { font-size: 13px; color: var(--text2); }
-  .card-link a {
-    font-size: 13px; color: var(--text2);
-    text-decoration: none; word-break: break-all;
-    border-bottom: 1px solid var(--border);
-    transition: var(--transition);
-  }
-  .card-link a:hover { color: var(--text); border-color: var(--text); }
-  .card-footer {
-    margin-top: auto; padding-top: 12px;
-    border-top: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .card-author { display: flex; align-items: center; gap: 8px; }
-  .author-pic { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
-  .author-name { font-size: 12px; color: var(--text2); }
-  .card-actions { display: flex; align-items: center; gap: 8px; }
-  .btn-like {
-    display: flex; align-items: center; gap: 5px;
-    background: none; border: 1px solid var(--border);
-    padding: 5px 12px; border-radius: 8px; cursor: pointer;
-    font-size: 13px; color: var(--text2); transition: var(--transition);
-  }
-  .btn-like:hover { border-color: var(--like); color: var(--like); }
-  .btn-like.liked { background: #fef2f2; border-color: var(--like); color: var(--like); }
-  .btn-like .heart {
-    width: 14px; height: 14px; fill: none;
-    stroke: currentColor; stroke-width: 2;
-    transition: var(--transition);
-  }
-  .btn-like.liked .heart { fill: var(--like); }
-  .btn-delete {
-    background: none; border: none; cursor: pointer;
-    color: var(--text2); font-size: 13px; padding: 5px;
-    transition: var(--transition); border-radius: 6px;
-  }
-  .btn-delete:hover { color: var(--closed); background: var(--closed-bg); }
+  /* Modals */
+  .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;align-items:center;justify-content:center;padding:20px;}
+  .modal-backdrop.open{display:flex;}
+  .modal{background:var(--bg2);border-radius:20px;width:100%;max-width:580px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,0.22);animation:fadeUp 0.22s ease;}
+  @keyframes fadeUp{from{transform:translateY(14px);opacity:0;}}
+  .modal-header{padding:22px 22px 0;display:flex;align-items:center;justify-content:space-between;}
+  .modal-title{font-size:18px;font-weight:700;}
+  .modal-close{background:none;border:none;cursor:pointer;color:var(--text2);width:32px;height:32px;border-radius:8px;font-size:20px;display:flex;align-items:center;justify-content:center;transition:var(--transition);}
+  .modal-close:hover{color:var(--text);background:var(--bg);}
+  .modal-body{padding:18px 22px 24px;display:flex;flex-direction:column;gap:14px;}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  label{font-size:13px;font-weight:600;}
+  label span{font-weight:400;color:var(--text2);}
+  input[type=text],input[type=url],input[type=number],textarea,select{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:inherit;transition:var(--transition);outline:none;direction:rtl;}
+  input:focus,textarea:focus,select:focus{border-color:var(--accent);}
+  textarea{min-height:90px;resize:vertical;}
+  .coords-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .map-picker{height:200px;border-radius:10px;overflow:hidden;border:1px solid var(--border);position:relative;}
+  .map-search-row{display:flex;gap:8px;margin-bottom:6px;}
+  .map-search-row input{flex:1;}
+  .btn-geo{background:var(--accent);color:white;border:none;padding:0 14px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;white-space:nowrap;transition:var(--transition);flex-shrink:0;}
+  .btn-geo:hover{background:var(--accent2);}
+  .map-hint{position:absolute;bottom:8px;right:8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:11px;color:var(--text2);z-index:10;pointer-events:none;}
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:10px;}
+  .toggle-label{font-size:14px;}
+  .toggle{position:relative;width:44px;height:24px;cursor:pointer;}
+  .toggle input{opacity:0;width:0;height:0;}
+  .toggle-track{position:absolute;inset:0;background:var(--border);border-radius:12px;transition:var(--transition);}
+  .toggle input:checked+.toggle-track{background:var(--accent);}
+  .toggle-thumb{position:absolute;top:3px;right:3px;width:18px;height:18px;background:white;border-radius:50%;transition:var(--transition);box-shadow:0 1px 3px rgba(0,0,0,0.2);}
+  .toggle input:checked~.toggle-thumb{right:auto;left:3px;}
+  .img-upload-area{border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:var(--transition);position:relative;background:var(--bg);}
+  .img-upload-area:hover{border-color:var(--accent);background:var(--accent-light);}
+  .img-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+  .img-upload-area p{font-size:13px;color:var(--text2);margin:0;}
+  .img-preview{width:100%;height:160px;object-fit:cover;border-radius:8px;margin-top:8px;display:none;}
+  .btn-submit{background:var(--accent);color:white;border:none;padding:13px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;transition:var(--transition);width:100%;}
+  .btn-submit:hover{background:var(--accent2);}
+  .btn-submit:disabled{opacity:0.5;cursor:not-allowed;}
+  .error-msg{font-size:13px;color:var(--closed);padding:10px 14px;background:var(--closed-bg);border-radius:8px;}
 
-  .modal-backdrop {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.5); z-index: 200;
-    align-items: center; justify-content: center; padding: 20px;
-  }
-  .modal-backdrop.open { display: flex; }
-  .modal {
-    background: var(--bg2); border-radius: 20px;
-    width: 100%; max-width: 560px; max-height: 90vh;
-    overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-    animation: fadeUp 0.22s ease;
-  }
-  @keyframes fadeUp { from { transform: translateY(16px); opacity: 0; } }
-  .modal-header {
-    padding: 24px 24px 0;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .modal-title { font-size: 19px; font-weight: 700; }
-  .modal-close {
-    background: none; border: none; cursor: pointer; color: var(--text2);
-    font-size: 22px; line-height: 1; padding: 4px; border-radius: 6px;
-    transition: var(--transition);
-  }
-  .modal-close:hover { color: var(--text); background: var(--accent-light); }
-  .modal-body { padding: 20px 24px 24px; display: flex; flex-direction: column; gap: 16px; }
-  .field { display: flex; flex-direction: column; gap: 6px; }
-  label { font-size: 13px; font-weight: 600; color: var(--text); }
-  label span { font-weight: 400; color: var(--text2); }
-  input[type=text], input[type=url], input[type=number], textarea, select {
-    width: 100%; padding: 10px 14px;
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: 10px; font-size: 14px; color: var(--text);
-    font-family: inherit; transition: var(--transition);
-    outline: none; direction: rtl;
-  }
-  input:focus, textarea:focus, select:focus { border-color: var(--text); }
-  textarea { min-height: 90px; resize: vertical; }
-  .coords-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .map-picker {
-    height: 200px; border-radius: 10px; overflow: hidden;
-    border: 1px solid var(--border); position: relative;
-  }
-  .map-hint {
-    position: absolute; bottom: 8px; right: 8px;
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 8px; padding: 4px 10px;
-    font-size: 11px; color: var(--text2); z-index: 10; pointer-events: none;
-  }
-  .toggle-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 14px; background: var(--bg);
-    border: 1px solid var(--border); border-radius: 10px;
-  }
-  .toggle-label { font-size: 14px; color: var(--text); }
-  .toggle { position: relative; width: 44px; height: 24px; cursor: pointer; }
-  .toggle input { opacity: 0; width: 0; height: 0; }
-  .toggle-track {
-    position: absolute; inset: 0; background: var(--border);
-    border-radius: 12px; transition: var(--transition);
-  }
-  .toggle input:checked + .toggle-track { background: var(--open); }
-  .toggle-thumb {
-    position: absolute; top: 3px; right: 3px;
-    width: 18px; height: 18px; background: white;
-    border-radius: 50%; transition: var(--transition);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  }
-  .toggle input:checked ~ .toggle-thumb { right: auto; left: 3px; }
-  .btn-submit {
-    background: var(--accent); color: var(--bg2);
-    border: none; padding: 13px; border-radius: 10px;
-    font-size: 15px; font-weight: 600; cursor: pointer;
-    transition: var(--transition); width: 100%;
-  }
-  .btn-submit:hover { opacity: 0.85; }
-  .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
-  .error-msg { font-size: 13px; color: var(--closed); padding: 10px 14px;
-               background: var(--closed-bg); border-radius: 8px; }
-  .empty {
-    text-align: center; padding: 80px 24px; color: var(--text2);
-    grid-column: 1 / -1;
-  }
-  .empty h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
-  .empty p { font-size: 15px; }
-  .loading { grid-column: 1 / -1; text-align: center; padding: 60px; color: var(--text2); font-size: 15px; }
+  /* Detail */
+  #detail-modal .modal{max-width:680px;}
+  .detail-img{width:100%;height:260px;object-fit:cover;flex-shrink:0;}
+  .detail-img-map{height:260px;}
+  .detail-body{padding:24px;display:flex;flex-direction:column;gap:14px;}
+  .detail-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+  .detail-name{font-size:22px;font-weight:800;line-height:1.3;}
+  .detail-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+  .detail-desc{font-size:15px;color:var(--text2);line-height:1.7;}
+  .detail-row{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text2);}
+  .detail-row svg{width:16px;height:16px;flex-shrink:0;color:var(--accent);}
+  .detail-row a{color:var(--accent);text-decoration:none;word-break:break-all;}
+  .detail-row a:hover{text-decoration:underline;}
+  .detail-actions{display:flex;gap:10px;padding-top:8px;border-top:1px solid var(--border);align-items:center;flex-wrap:wrap;}
+  .btn-like-lg{display:flex;align-items:center;gap:6px;background:none;border:1px solid var(--border);padding:8px 18px;border-radius:10px;cursor:pointer;font-size:14px;color:var(--text2);transition:var(--transition);}
+  .btn-like-lg:hover{border-color:var(--like);color:var(--like);}
+  .btn-like-lg.liked{background:#fef2f2;border-color:var(--like);color:var(--like);}
+  .btn-like-lg .heart{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;}
+  .btn-like-lg.liked .heart{fill:var(--like);}
+  .btn-nav-link{display:flex;align-items:center;gap:6px;background:var(--accent);color:white;padding:8px 18px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;transition:var(--transition);}
+  .btn-nav-link:hover{background:var(--accent2);}
+  .btn-nav-link svg{width:16px;height:16px;stroke:white;fill:none;}
 
-  @media (max-width: 600px) {
-    .header-inner { padding: 0 16px; }
-    .app-inner { padding: 20px 16px; }
-    .toolbar { gap: 8px; }
-    .toolbar-title { font-size: 18px; }
-    .grid { grid-template-columns: 1fr; }
-    .auth-card, .contribute-card { padding: 32px 24px; }
+  .empty{text-align:center;padding:80px 24px;color:var(--text2);grid-column:1/-1;}
+  .empty h3{font-size:18px;font-weight:700;margin-bottom:8px;color:var(--text);}
+  .empty p{font-size:15px;}
+  .loading{grid-column:1/-1;text-align:center;padding:60px;color:var(--text2);font-size:15px;}
+
+  @media(max-width:640px){
+    .header-inner{padding:0 14px;gap:10px;}
+    .header-search{display:none;}
+    .app-inner{padding:16px 14px;}
+    .grid{grid-template-columns:1fr;}
+    .auth-card,.contribute-card{padding:32px 22px;}
+    .detail-img,.detail-img-map{height:200px;}
+    .toolbar{gap:8px;}
+    .toolbar-title{font-size:18px;}
   }
 </style>
 </head>
@@ -291,24 +204,39 @@
 
 <header>
   <div class="header-inner">
-    <span class="site-name">מקומות שווים</span>
+    <a class="logo" href="#">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
+      </div>
+      מטיילים
+    </a>
+    <div class="header-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="header-search" placeholder="חפש מקום..." oninput="onSearchInput()">
+    </div>
     <div class="user-area" id="user-area"></div>
   </div>
 </header>
 
 <div id="auth-wall">
   <div class="auth-card">
-    <h1>מקומות שווים לטיול</h1>
-    <p>הכנסו כדי לגלות ולשתף מקומות מדהימים ברחבי הארץ.<br>כדי לראות את המפה חייבים לתרום מקום אחד לפחות.</p>
+    <div class="auth-logo">
+      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
+    </div>
+    <h1>מטיילים</h1>
+    <p>גלו ושתפו מקומות מדהימים ברחבי הארץ.<br>כדי לראות את המפה יש לתרום מקום אחד לפחות.</p>
     <div id="google-btn"></div>
   </div>
 </div>
 
 <div id="contribute-wall">
   <div class="contribute-card">
-    <h2>ברוך הבא!</h2>
+    <h2>ברוך הבא! 👋</h2>
     <p>לפני שאפשר לראות את המקומות, תוסיפו מקום אחד שאתם ממליצים עליו. כך הקהילה נבנית ביחד.</p>
-    <button class="btn-add" onclick="openModal(true)">הוספת מקום ראשון</button>
+    <button class="btn-add" onclick="openModal(true)">
+      <svg viewBox="0 0 24 24" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      הוספת מקום ראשון
+    </button>
   </div>
 </div>
 
@@ -316,20 +244,29 @@
   <div class="app-inner">
     <div class="toolbar">
       <span class="toolbar-title">מקומות מומלצים</span>
-      <button class="btn-add" onclick="openModal(false)">הוספת מקום</button>
+      <div class="toolbar-right">
+        <select class="sort-select" id="sort-select" onchange="renderGrid()">
+          <option value="newest">חדש ביותר</option>
+          <option value="liked">הכי אהוב</option>
+          <option value="nearest">קרוב אליי</option>
+        </select>
+        <button class="btn-add" onclick="openModal(false)">
+          <svg viewBox="0 0 24 24" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          הוספת מקום
+        </button>
+      </div>
     </div>
     <div class="filters" id="filters"></div>
-    <div class="grid" id="grid">
-      <div class="loading">טוען מקומות...</div>
-    </div>
+    <div class="grid" id="grid"><div class="loading">טוען מקומות...</div></div>
   </div>
 </div>
 
+<!-- Add Modal -->
 <div class="modal-backdrop" id="modal">
   <div class="modal">
     <div class="modal-header">
       <span class="modal-title" id="modal-title">הוספת מקום חדש</span>
-      <button class="modal-close" id="modal-close-btn">&times;</button>
+      <button class="modal-close" id="modal-close-btn">✕</button>
     </div>
     <div class="modal-body">
       <div id="form-error" class="error-msg" style="display:none"></div>
@@ -339,9 +276,15 @@
       </div>
       <div class="field">
         <label>קטגוריה <span style="color:var(--closed)">*</span></label>
-        <select id="f-category">
-          <option value="">בחר קטגוריה</option>
-        </select>
+        <select id="f-category"><option value="">בחר קטגוריה</option></select>
+      </div>
+      <div class="field">
+        <label>תמונה <span>(אופציונלי)</span></label>
+        <div class="img-upload-area">
+          <input type="file" id="f-image" accept="image/*" onchange="onImageSelected()">
+          <p id="upload-hint">📷 לחץ לבחירת תמונה</p>
+          <img id="img-preview" class="img-preview" alt="">
+        </div>
       </div>
       <div class="field">
         <label>תיאור <span>(אופציונלי)</span></label>
@@ -356,7 +299,12 @@
         <input type="url" id="f-link" placeholder="https://">
       </div>
       <div class="field">
-        <label>מיקום על המפה <span>(לחץ למיקום מדויק)</span></label>
+        <label>מיקום על המפה</label>
+        <div class="map-search-row">
+          <input type="text" id="map-search-input" placeholder="חפש מקום... (לדוגמה: מכתש רמון)">
+          <button class="btn-geo" onclick="geocodeSearch()">חפש</button>
+          <button class="btn-geo" onclick="useMyLocation()" title="מיקום נוכחי">📍</button>
+        </div>
         <div class="map-picker" id="map-picker">
           <span class="map-hint">לחץ על המפה לסימון</span>
         </div>
@@ -386,27 +334,27 @@
   </div>
 </div>
 
-<!-- Google Sign-In loaded LAST, with onload callback -->
+<!-- Detail Modal -->
+<div class="modal-backdrop" id="detail-modal">
+  <div class="modal">
+    <div id="detail-content"></div>
+  </div>
+</div>
+
 <script>
 const API = 'https://dhoc97909.pythonanywhere.com';
 const GOOGLE_CLIENT_ID = '426523025549-7c50rkn7cun4vmm2r802u0ij6egjehtg.apps.googleusercontent.com';
-
-const CATEGORIES = [
-  'מעיינות ורטובים','אקשן ואקסטרים','נוף ותצפיות',
-  'חופים ומים','הרים וטבע','ערים ותרבות','אוכל ושתייה','אחר'
-];
+const CATEGORIES = ['מעיינות ורטובים','אקשן ואקסטרים','נוף ותצפיות','חופים ומים','הרים וטבע','ערים ותרבות','אוכל ושתייה','אחר'];
 
 let state = {
-  user: null,
-  token: null,
-  locations: [],
-  activeCategory: '',
-  pickerMap: null,
-  pickerMarker: null,
-  cardMaps: {},
+  user:null, token:null, locations:[],
+  activeCategory:'', searchQuery:'',
+  pickerMap:null, pickerMarker:null, cardMaps:{},
+  userLat:null, userLng:null,
 };
+let isFirstContrib = false;
+let searchTimer = null;
 
-// THE FIX: called by onload on the script tag below — guaranteed to run after Google SDK is ready
 function initGoogle() {
   google.accounts.id.initialize({
     client_id: GOOGLE_CLIENT_ID,
@@ -414,333 +362,389 @@ function initGoogle() {
     auto_select: true,
   });
   google.accounts.id.renderButton(document.getElementById('google-btn'), {
-    theme: 'outline', size: 'large', locale: 'he', text: 'signin_with',
-    shape: 'rectangular', width: 280,
+    theme:'outline', size:'large', locale:'he', shape:'rectangular', width:280,
   });
   google.accounts.id.prompt();
 }
-
-// Build filters & category select on DOM ready (no Google dependency)
 document.addEventListener('DOMContentLoaded', buildFilters);
 
 async function handleGoogleCredential(resp) {
   state.token = resp.credential;
   try {
-    const res = await apiFetch('/api/auth', 'POST', { token: state.token });
+    const res = await apiFetch('/api/auth','POST',{token:state.token});
     state.user = res;
     showUserArea();
-    if (!res.has_contributed) {
-      showContributeWall();
-    } else {
-      showApp();
-      loadLocations();
-    }
-  } catch(e) {
-    alert('שגיאה בהתחברות: ' + e.message);
-  }
+    if (!res.has_contributed) showContributeWall();
+    else { showApp(); loadLocations(); }
+  } catch(e) { alert('שגיאה בהתחברות: '+e.message); }
 }
 
 function showUserArea() {
   document.getElementById('user-area').innerHTML = `
     <img class="user-pic" src="${state.user.picture}" alt="">
-    <span class="user-name">${state.user.name}</span>
-    <button class="btn-sign-out" onclick="signOut()">יציאה</button>
-  `;
+    <span class="user-name">${escHtml(state.user.name)}</span>
+    <button class="btn-sign-out" onclick="signOut()">יציאה</button>`;
 }
-
 function signOut() {
   google.accounts.id.disableAutoSelect();
-  state.user = null; state.token = null;
-  document.getElementById('user-area').innerHTML = '';
-  document.getElementById('auth-wall').style.display = 'flex';
-  document.getElementById('contribute-wall').style.display = 'none';
-  document.getElementById('app').style.display = 'none';
+  state.user=null; state.token=null;
+  document.getElementById('user-area').innerHTML='';
+  document.getElementById('auth-wall').style.display='flex';
+  document.getElementById('contribute-wall').style.display='none';
+  document.getElementById('app').style.display='none';
 }
-
 function showContributeWall() {
-  document.getElementById('auth-wall').style.display = 'none';
-  document.getElementById('contribute-wall').style.display = 'flex';
-  document.getElementById('app').style.display = 'none';
+  document.getElementById('auth-wall').style.display='none';
+  document.getElementById('contribute-wall').style.display='flex';
+  document.getElementById('app').style.display='none';
 }
-
 function showApp() {
-  document.getElementById('auth-wall').style.display = 'none';
-  document.getElementById('contribute-wall').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
+  document.getElementById('auth-wall').style.display='none';
+  document.getElementById('contribute-wall').style.display='none';
+  document.getElementById('app').style.display='block';
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      p => { state.userLat=p.coords.latitude; state.userLng=p.coords.longitude; },
+      ()=>{}
+    );
+  }
 }
 
 function buildFilters() {
   const el = document.getElementById('filters');
   if (!el) return;
-  const all = `<button class="filter-pill active" onclick="setFilter(this,'')">הכל</button>`;
-  const pills = CATEGORIES.map(c =>
-    `<button class="filter-pill" onclick="setFilter(this,'${c}')">${c}</button>`
-  ).join('');
-  el.innerHTML = all + pills;
+  el.innerHTML = `<button class="filter-pill active" onclick="setFilter(this,'')">הכל</button>` +
+    CATEGORIES.map(c=>`<button class="filter-pill" onclick="setFilter(this,'${c}')">${c}</button>`).join('');
   const sel = document.getElementById('f-category');
-  if (sel) {
-    CATEGORIES.forEach(c => {
-      const opt = document.createElement('option');
-      opt.value = c; opt.textContent = c;
-      sel.appendChild(opt);
-    });
-  }
+  if (sel) CATEGORIES.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
 }
-
-function setFilter(btn, cat) {
-  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+function setFilter(btn,cat) {
+  document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
   btn.classList.add('active');
-  state.activeCategory = cat;
+  state.activeCategory=cat;
   loadLocations();
+}
+function onSearchInput() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(()=>{
+    state.searchQuery = document.getElementById('header-search').value.trim();
+    loadLocations();
+  }, 350);
 }
 
 async function loadLocations() {
-  document.getElementById('grid').innerHTML = '<div class="loading">טוען מקומות...</div>';
+  document.getElementById('grid').innerHTML='<div class="loading">טוען מקומות...</div>';
   try {
-    const url = state.activeCategory
-      ? `/api/locations?category=${encodeURIComponent(state.activeCategory)}`
-      : '/api/locations';
-    state.locations = await apiFetch(url, 'GET');
+    let url='/api/locations?';
+    if (state.activeCategory) url+=`category=${encodeURIComponent(state.activeCategory)}&`;
+    if (state.searchQuery) url+=`search=${encodeURIComponent(state.searchQuery)}&`;
+    state.locations = await apiFetch(url,'GET');
     renderGrid();
   } catch(e) {
-    document.getElementById('grid').innerHTML = `<div class="empty"><h3>שגיאה בטעינה</h3><p>${e.message}</p></div>`;
+    document.getElementById('grid').innerHTML=`<div class="empty"><h3>שגיאה בטעינה</h3><p>${e.message}</p></div>`;
   }
+}
+
+function getSorted() {
+  const sort = document.getElementById('sort-select')?.value||'newest';
+  const locs = [...state.locations];
+  if (sort==='liked') locs.sort((a,b)=>(b.like_count||0)-(a.like_count||0));
+  else if (sort==='nearest' && state.userLat!==null)
+    locs.sort((a,b)=>dist(a)-dist(b));
+  return locs;
+}
+function dist(loc) {
+  if (!loc.lat||!loc.lng) return 99999;
+  return Math.sqrt(Math.pow(loc.lat-state.userLat,2)+Math.pow(loc.lng-state.userLng,2));
 }
 
 function renderGrid() {
-  const grid = document.getElementById('grid');
-  state.cardMaps = {};
-  if (!state.locations.length) {
-    grid.innerHTML = `<div class="empty"><h3>אין מקומות עדיין</h3><p>היו הראשונים להוסיף מקום!</p></div>`;
+  const grid=document.getElementById('grid');
+  state.cardMaps={};
+  const locs=getSorted();
+  if (!locs.length) {
+    grid.innerHTML=`<div class="empty"><h3>לא נמצאו מקומות</h3><p>נסו לשנות את החיפוש או הקטגוריה</p></div>`;
     return;
   }
-  grid.innerHTML = state.locations.map(loc => cardHTML(loc)).join('');
-  state.locations.forEach(loc => {
-    if (loc.lat && loc.lng) initCardMap(loc);
-  });
+  grid.innerHTML=locs.map(loc=>cardHTML(loc)).join('');
+  locs.forEach(loc=>{ if(loc.lat&&loc.lng&&!loc.image_url) initCardMap(loc); });
 }
 
 function cardHTML(loc) {
-  const status = loc.is_open
-    ? '<span class="status-badge status-open">פתוח</span>'
-    : '<span class="status-badge status-closed">סגור</span>';
-  const mapDiv = loc.lat && loc.lng
-    ? `<div class="card-map" id="cmap-${loc.id}"></div>`
-    : `<div class="card-map"><div class="card-map-placeholder">אין מיקום מדויק</div></div>`;
-  const link = loc.link
-    ? `<div class="card-link"><a href="${loc.link}" target="_blank" rel="noopener">${escHtml(loc.link)}</a></div>` : '';
-  const addr = loc.address ? `<div class="card-address">${escHtml(loc.address)}</div>` : '';
-  const desc = loc.description ? `<div class="card-desc">${escHtml(loc.description)}</div>` : '';
-  const cat = loc.category ? `<span class="card-category">${escHtml(loc.category)}</span>` : '';
-  const likedClass = loc.liked_by_me ? 'liked' : '';
-  const isOwner = state.user && state.user.user_id === loc.user_id;
-  const delBtn = isOwner
-    ? `<button class="btn-delete" onclick="deleteLocation(${loc.id})" title="מחיקה">
-         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-           <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
-           <path d="M10 11v6M14 11v6"/>
-         </svg>
-       </button>` : '';
-  return `
-    <div class="card" id="card-${loc.id}">
-      ${mapDiv}
-      <div class="card-body">
-        <div class="card-header">
-          <span class="card-name">${escHtml(loc.name)}</span>
-          ${status}
+  const status=loc.is_open
+    ?'<span class="status-badge status-open">פתוח</span>'
+    :'<span class="status-badge status-closed">סגור</span>';
+  let imgSection;
+  if (loc.image_url) {
+    imgSection=`<div class="card-img"><img src="${API}${loc.image_url}" alt="${escHtml(loc.name)}" loading="lazy"></div>`;
+  } else if (loc.lat&&loc.lng) {
+    imgSection=`<div class="card-img-map" id="cmap-${loc.id}"></div>`;
+  } else {
+    imgSection=`<div class="card-img-placeholder"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg></div>`;
+  }
+  const likedClass=loc.liked_by_me?'liked':'';
+  const isOwner=state.user&&state.user.user_id===loc.user_id;
+  const delBtn=isOwner?`<button class="btn-delete" onclick="event.stopPropagation();deleteLocation(${loc.id})">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6M14 11v6"/></svg></button>`:'';
+  const addr=loc.address?`<div class="card-address"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>${escHtml(loc.address)}</div>`:'';
+  const desc=loc.description?`<div class="card-desc">${escHtml(loc.description)}</div>`:'';
+  const cat=loc.category?`<span class="card-category">${escHtml(loc.category)}</span>`:'';
+  return `<div class="card" id="card-${loc.id}" onclick="openDetail(${loc.id})">
+    ${imgSection}
+    <div class="card-body">
+      <div class="card-header"><span class="card-name">${escHtml(loc.name)}</span>${status}</div>
+      ${cat}${desc}${addr}
+      <div class="card-footer">
+        <div class="card-author">
+          <img class="author-pic" src="${escHtml(loc.user_picture||'')}" alt="">
+          <span class="author-name">${escHtml(loc.user_name||'')}</span>
         </div>
-        ${cat}${desc}${addr}${link}
-        <div class="card-footer">
-          <div class="card-author">
-            <img class="author-pic" src="${loc.user_picture||''}" alt="">
-            <span class="author-name">${escHtml(loc.user_name||'')}</span>
-          </div>
-          <div class="card-actions">
-            <button class="btn-like ${likedClass}" id="like-${loc.id}" onclick="toggleLike(${loc.id})">
-              <svg class="heart" viewBox="0 0 24 24">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-              </svg>
-              <span id="like-count-${loc.id}">${loc.like_count||0}</span>
-            </button>
-            ${delBtn}
-          </div>
+        <div class="card-actions">
+          <button class="btn-like ${likedClass}" id="like-${loc.id}" onclick="event.stopPropagation();toggleLike(${loc.id})">
+            <svg class="heart" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span id="like-count-${loc.id}">${loc.like_count||0}</span>
+          </button>
+          ${delBtn}
         </div>
       </div>
-    </div>`;
+    </div>
+  </div>`;
 }
 
 function initCardMap(loc) {
-  setTimeout(() => {
-    const el = document.getElementById(`cmap-${loc.id}`);
-    if (!el || state.cardMaps[loc.id]) return;
-    const m = L.map(el, { zoomControl: false, dragging: false, scrollWheelZoom: false,
-      attributionControl: false, doubleClickZoom: false });
+  setTimeout(()=>{
+    const el=document.getElementById(`cmap-${loc.id}`);
+    if(!el||state.cardMaps[loc.id]) return;
+    const m=L.map(el,{zoomControl:false,dragging:false,scrollWheelZoom:false,attributionControl:false,doubleClickZoom:false});
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
-    m.setView([loc.lat, loc.lng], 14);
-    L.circleMarker([loc.lat, loc.lng], {
-      radius: 8, fillColor: '#1a1917', color: '#fff', weight: 2, fillOpacity: 1
-    }).addTo(m);
-    state.cardMaps[loc.id] = m;
-  }, 50);
+    m.setView([loc.lat,loc.lng],14);
+    L.circleMarker([loc.lat,loc.lng],{radius:8,fillColor:'#2d6a4f',color:'#fff',weight:2,fillOpacity:1}).addTo(m);
+    state.cardMaps[loc.id]=m;
+  },60);
 }
 
+function openDetail(id) {
+  const loc=state.locations.find(l=>l.id===id);
+  if(!loc) return;
+  const status=loc.is_open
+    ?'<span class="status-badge status-open">פתוח</span>'
+    :'<span class="status-badge status-closed">סגור</span>';
+  const cat=loc.category?`<span class="card-category">${escHtml(loc.category)}</span>`:'';
+  const likedClass=loc.liked_by_me?'liked':'';
+  let topSection='';
+  if (loc.image_url) {
+    topSection=`<img class="detail-img" src="${API}${loc.image_url}" alt="${escHtml(loc.name)}">`;
+  } else if (loc.lat&&loc.lng) {
+    topSection=`<div class="detail-img-map" id="detail-map"></div>`;
+  }
+  const addrRow=loc.address?`<div class="detail-row"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>${escHtml(loc.address)}</div>`:'';
+  const linkRow=loc.link?`<div class="detail-row"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><a href="${escHtml(loc.link)}" target="_blank" rel="noopener">פתח קישור</a></div>`:'';
+  const isOwner=state.user&&state.user.user_id===loc.user_id;
+  const delBtn=isOwner?`<button class="btn-delete" onclick="deleteLocation(${loc.id});closeDetail()" style="margin-right:auto;padding:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>`:'';
+
+  document.getElementById('detail-content').innerHTML=`
+    <div class="modal-header" style="padding:18px 18px 0">
+      <span></span>
+      <button class="modal-close" onclick="closeDetail()">✕</button>
+    </div>
+    ${topSection}
+    <div class="detail-body">
+      <div class="detail-header"><span class="detail-name">${escHtml(loc.name)}</span>${status}</div>
+      <div class="detail-meta">${cat}<span style="font-size:12px;color:var(--text2)">נוסף על ידי ${escHtml(loc.user_name||'')}</span></div>
+      ${loc.description?`<div class="detail-desc">${escHtml(loc.description)}</div>`:''}
+      ${addrRow}${linkRow}
+      <div class="detail-actions">
+        <button class="btn-like-lg ${likedClass}" id="detail-like-${loc.id}" onclick="toggleLike(${loc.id})">
+          <svg class="heart" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span id="detail-like-count-${loc.id}">${loc.like_count||0}</span> אהבתי
+        </button>
+        ${loc.link?`<a class="btn-nav-link" href="${escHtml(loc.link)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>כניסה למקום</a>`:''}
+        ${delBtn}
+      </div>
+    </div>`;
+
+  document.getElementById('detail-modal').classList.add('open');
+  if (!loc.image_url&&loc.lat&&loc.lng) {
+    setTimeout(()=>{
+      const el=document.getElementById('detail-map');
+      if(!el) return;
+      const m=L.map(el,{zoomControl:true,attributionControl:false});
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
+      m.setView([loc.lat,loc.lng],14);
+      L.circleMarker([loc.lat,loc.lng],{radius:10,fillColor:'#2d6a4f',color:'#fff',weight:2,fillOpacity:1}).addTo(m);
+    },80);
+  }
+}
+function closeDetail() { document.getElementById('detail-modal').classList.remove('open'); }
+document.getElementById('detail-modal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('detail-modal')) closeDetail();
+});
+
 async function toggleLike(id) {
-  if (!state.token) return;
+  if(!state.token) return;
   try {
-    const res = await apiFetch(`/api/locations/${id}/like`, 'POST');
-    const btn = document.getElementById(`like-${id}`);
-    const cnt = document.getElementById(`like-count-${id}`);
-    if (res.liked) btn.classList.add('liked'); else btn.classList.remove('liked');
-    cnt.textContent = res.count;
-    const loc = state.locations.find(l => l.id === id);
-    if (loc) { loc.liked_by_me = res.liked; loc.like_count = res.count; }
-  } catch(e) {}
+    const res=await apiFetch(`/api/locations/${id}/like`,'POST');
+    [['like-','like-count-'],['detail-like-','detail-like-count-']].forEach(([bp,cp])=>{
+      const btn=document.getElementById(bp+id);
+      const cnt=document.getElementById(cp+id);
+      if(btn){ res.liked?btn.classList.add('liked'):btn.classList.remove('liked'); }
+      if(cnt) cnt.textContent=res.count;
+    });
+    const loc=state.locations.find(l=>l.id===id);
+    if(loc){ loc.liked_by_me=res.liked; loc.like_count=res.count; }
+  } catch(e){}
 }
 
 async function deleteLocation(id) {
-  if (!confirm('למחוק את המקום הזה?')) return;
+  if(!confirm('למחוק את המקום הזה?')) return;
   try {
-    await apiFetch(`/api/locations/${id}`, 'DELETE');
-    state.locations = state.locations.filter(l => l.id !== id);
-    const card = document.getElementById(`card-${id}`);
-    if (card) card.remove();
-    if (!state.locations.length) renderGrid();
-  } catch(e) { alert('שגיאה: ' + e.message); }
+    await apiFetch(`/api/locations/${id}`,'DELETE');
+    state.locations=state.locations.filter(l=>l.id!==id);
+    const card=document.getElementById(`card-${id}`);
+    if(card) card.remove();
+    if(!state.locations.length) renderGrid();
+  } catch(e){ alert('שגיאה: '+e.message); }
 }
 
-let isFirstContrib = false;
 function openModal(firstContrib) {
-  isFirstContrib = firstContrib;
-  document.getElementById('modal-title').textContent =
-    firstContrib ? 'הוספת המקום הראשון שלך' : 'הוספת מקום חדש';
-  const mc = document.getElementById('modal-close-btn');
-  mc.style.display = firstContrib ? 'none' : '';
-  document.getElementById('form-error').style.display = 'none';
+  isFirstContrib=firstContrib;
+  document.getElementById('modal-title').textContent=firstContrib?'הוספת המקום הראשון שלך':'הוספת מקום חדש';
+  document.getElementById('modal-close-btn').style.display=firstContrib?'none':'';
+  document.getElementById('form-error').style.display='none';
   clearForm();
   document.getElementById('modal').classList.add('open');
-  setTimeout(initPickerMap, 100);
+  setTimeout(initPickerMap,100);
 }
-
-document.getElementById('modal-close-btn').onclick = () => {
-  document.getElementById('modal').classList.remove('open');
-};
-document.getElementById('modal').addEventListener('click', e => {
-  if (e.target === document.getElementById('modal') && !isFirstContrib) {
+document.getElementById('modal-close-btn').onclick=()=>document.getElementById('modal').classList.remove('open');
+document.getElementById('modal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('modal')&&!isFirstContrib)
     document.getElementById('modal').classList.remove('open');
-  }
 });
 
 function clearForm() {
-  ['f-name','f-address','f-link','f-desc','f-lat','f-lng'].forEach(id => {
-    document.getElementById(id).value = '';
+  ['f-name','f-address','f-link','f-desc','f-lat','f-lng','map-search-input'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
   });
-  document.getElementById('f-category').value = '';
-  document.getElementById('f-open').checked = true;
-  if (state.pickerMarker) {
-    state.pickerMarker.remove();
-    state.pickerMarker = null;
-  }
+  document.getElementById('f-category').value='';
+  document.getElementById('f-open').checked=true;
+  document.getElementById('f-image').value='';
+  document.getElementById('img-preview').style.display='none';
+  document.getElementById('upload-hint').textContent='📷 לחץ לבחירת תמונה';
+  if(state.pickerMarker){state.pickerMarker.remove();state.pickerMarker=null;}
+}
+
+function onImageSelected() {
+  const file=document.getElementById('f-image').files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const prev=document.getElementById('img-preview');
+    prev.src=e.target.result; prev.style.display='block';
+    document.getElementById('upload-hint').textContent=file.name;
+  };
+  reader.readAsDataURL(file);
 }
 
 function initPickerMap() {
-  if (state.pickerMap) {
-    state.pickerMap.invalidateSize();
-    return;
-  }
-  const el = document.getElementById('map-picker');
-  const m = L.map(el, { attributionControl: false });
+  if(state.pickerMap){state.pickerMap.invalidateSize();return;}
+  const el=document.getElementById('map-picker');
+  const m=L.map(el,{attributionControl:false});
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
-  m.setView([31.7, 35.1], 7);
-  m.on('click', e => {
-    const { lat, lng } = e.latlng;
-    document.getElementById('f-lat').value = lat.toFixed(6);
-    document.getElementById('f-lng').value = lng.toFixed(6);
-    if (state.pickerMarker) state.pickerMarker.remove();
-    state.pickerMarker = L.circleMarker([lat, lng], {
-      radius: 9, fillColor: '#1a1917', color: '#fff', weight: 2, fillOpacity: 1
-    }).addTo(m);
-  });
-  state.pickerMap = m;
+  m.setView([31.7,35.1],7);
+  m.on('click',e=>setPickerMarker(e.latlng.lat,e.latlng.lng));
+  state.pickerMap=m;
 }
-
-['f-lat','f-lng'].forEach(id => {
-  document.getElementById(id).addEventListener('change', () => {
-    const lat = parseFloat(document.getElementById('f-lat').value);
-    const lng = parseFloat(document.getElementById('f-lng').value);
-    if (!isNaN(lat) && !isNaN(lng) && state.pickerMap) {
-      state.pickerMap.setView([lat, lng], 14);
-      if (state.pickerMarker) state.pickerMarker.remove();
-      state.pickerMarker = L.circleMarker([lat, lng], {
-        radius: 9, fillColor: '#1a1917', color: '#fff', weight: 2, fillOpacity: 1
-      }).addTo(state.pickerMap);
-    }
+function setPickerMarker(lat,lng) {
+  document.getElementById('f-lat').value=lat.toFixed(6);
+  document.getElementById('f-lng').value=lng.toFixed(6);
+  if(state.pickerMarker) state.pickerMarker.remove();
+  state.pickerMarker=L.circleMarker([lat,lng],{radius:9,fillColor:'#2d6a4f',color:'#fff',weight:2,fillOpacity:1}).addTo(state.pickerMap);
+  state.pickerMap.setView([lat,lng],13);
+}
+['f-lat','f-lng'].forEach(id=>{
+  document.getElementById(id).addEventListener('change',()=>{
+    const lat=parseFloat(document.getElementById('f-lat').value);
+    const lng=parseFloat(document.getElementById('f-lng').value);
+    if(!isNaN(lat)&&!isNaN(lng)&&state.pickerMap) setPickerMarker(lat,lng);
   });
 });
 
-async function submitLocation() {
-  const errEl = document.getElementById('form-error');
-  errEl.style.display = 'none';
-  const name = document.getElementById('f-name').value.trim();
-  const cat  = document.getElementById('f-category').value;
-  const link = document.getElementById('f-link').value.trim();
-  const lat  = document.getElementById('f-lat').value;
-  const lng  = document.getElementById('f-lng').value;
-
-  if (!name)  { showErr('שם המקום הוא שדה חובה'); return; }
-  if (!cat)   { showErr('יש לבחור קטגוריה'); return; }
-  if (!link)  { showErr('קישור הוא שדה חובה'); return; }
-  if (!lat || !lng) { showErr('יש לסמן מיקום על המפה'); return; }
-
-  const btn = document.getElementById('submit-btn');
-  btn.disabled = true; btn.textContent = 'שומר...';
-
+async function geocodeSearch() {
+  const q=document.getElementById('map-search-input').value.trim();
+  if(!q) return;
   try {
-    await apiFetch('/api/locations', 'POST', {
-      name, category: cat,
-      description: document.getElementById('f-desc').value.trim(),
-      address: document.getElementById('f-address').value.trim(),
-      link,
-      lat: parseFloat(lat), lng: parseFloat(lng),
-      is_open: document.getElementById('f-open').checked,
+    const res=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=il`,{headers:{'Accept-Language':'he'}});
+    const data=await res.json();
+    if(data.length) setPickerMarker(parseFloat(data[0].lat),parseFloat(data[0].lon));
+    else alert('לא נמצא מיקום, נסה שם אחר');
+  } catch(e){ alert('שגיאה בחיפוש מיקום'); }
+}
+document.getElementById('map-search-input').addEventListener('keydown',e=>{if(e.key==='Enter') geocodeSearch();});
+
+function useMyLocation() {
+  if(!navigator.geolocation){alert('הדפדפן לא תומך במיקום');return;}
+  navigator.geolocation.getCurrentPosition(
+    p=>setPickerMarker(p.coords.latitude,p.coords.longitude),
+    ()=>alert('לא ניתן לקבל מיקום')
+  );
+}
+
+async function submitLocation() {
+  const errEl=document.getElementById('form-error');
+  errEl.style.display='none';
+  const name=document.getElementById('f-name').value.trim();
+  const cat=document.getElementById('f-category').value;
+  const link=document.getElementById('f-link').value.trim();
+  const lat=document.getElementById('f-lat').value;
+  const lng=document.getElementById('f-lng').value;
+  if(!name){showErr('שם המקום הוא שדה חובה');return;}
+  if(!cat){showErr('יש לבחור קטגוריה');return;}
+  if(!link){showErr('קישור הוא שדה חובה');return;}
+  if(!lat||!lng){showErr('יש לסמן מיקום על המפה');return;}
+
+  const btn=document.getElementById('submit-btn');
+  btn.disabled=true; btn.textContent='שומר...';
+  try {
+    let image_url='';
+    const imageFile=document.getElementById('f-image').files[0];
+    if(imageFile) {
+      btn.textContent='מעלה תמונה...';
+      const fd=new FormData();
+      fd.append('image',imageFile);
+      const upRes=await fetch(API+'/api/upload',{method:'POST',headers:{'Authorization':'Bearer '+state.token},body:fd});
+      const upData=await upRes.json();
+      if(!upRes.ok) throw new Error(upData.error||'שגיאה בהעלאת תמונה');
+      image_url=upData.url;
+      btn.textContent='שומר...';
+    }
+    await apiFetch('/api/locations','POST',{
+      name, category:cat,
+      description:document.getElementById('f-desc').value.trim(),
+      address:document.getElementById('f-address').value.trim(),
+      link, lat:parseFloat(lat), lng:parseFloat(lng),
+      is_open:document.getElementById('f-open').checked,
+      image_url,
     });
     document.getElementById('modal').classList.remove('open');
-    if (isFirstContrib) {
-      state.user.has_contributed = true;
-      showApp();
-    }
+    if(isFirstContrib){state.user.has_contributed=true;showApp();}
     loadLocations();
-  } catch(e) {
-    showErr(e.message);
-  } finally {
-    btn.disabled = false; btn.textContent = 'שמירת המקום';
-  }
+  } catch(e){showErr(e.message);}
+  finally{btn.disabled=false;btn.textContent='שמירת המקום';}
 }
 
-function showErr(msg) {
-  const el = document.getElementById('form-error');
-  el.textContent = msg; el.style.display = 'block';
-}
+function showErr(msg){const el=document.getElementById('form-error');el.textContent=msg;el.style.display='block';}
 
-async function apiFetch(path, method, body) {
-  const opts = {
-    method,
-    headers: { 'Content-Type': 'application/json' },
-  };
-  if (state.token) opts.headers['Authorization'] = 'Bearer ' + state.token;
-  if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(API + path, opts);
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'שגיאה');
+async function apiFetch(path,method,body){
+  const opts={method,headers:{'Content-Type':'application/json'}};
+  if(state.token) opts.headers['Authorization']='Bearer '+state.token;
+  if(body) opts.body=JSON.stringify(body);
+  const res=await fetch(API+path,opts);
+  const data=await res.json();
+  if(!res.ok) throw new Error(data.error||'שגיאה');
   return data;
 }
-
-function escHtml(s) {
-  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+function escHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 </script>
-
-<!-- Google GSI loaded LAST with onload=initGoogle — this is the key fix -->
 <script src="https://accounts.google.com/gsi/client" async defer onload="initGoogle()"></script>
-
 </body>
 </html>
