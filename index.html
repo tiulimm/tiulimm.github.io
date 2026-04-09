@@ -31,7 +31,7 @@
   html,body{
     font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     background:var(--bg);color:var(--text);min-height:100vh;direction:rtl;
-    overflow-x:hidden;max-width:100vw;
+    overflow-x:hidden;width:100%; /* תוקן: למנוע גלילה אופקית */
   }
   a{color:inherit;}img{max-width:100%;}
 
@@ -87,8 +87,8 @@
 
   /* Grid */
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
-  .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:var(--transition);display:flex;flex-direction:column;cursor:pointer;}
-  .card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:transform 0.2s ease, box-shadow 0.2s ease;display:flex;flex-direction:column;cursor:pointer;}
+  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
   .card-img{height:180px;overflow:hidden;position:relative;flex-shrink:0;background:var(--accent-light);}
   .card-img img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease;}
   .card:hover .card-img img{transform:scale(1.04);}
@@ -98,9 +98,12 @@
   .card-body{padding:16px;flex:1;display:flex;flex-direction:column;gap:8px;}
   .card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
   .card-name{font-size:15px;font-weight:700;line-height:1.3;}
-  .status-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+  .status-badge{font-size:11px;font-weight:600;padding:4px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
   .status-open{color:var(--open);background:var(--open-bg);}
   .status-closed{color:var(--closed);background:var(--closed-bg);}
+  .status-paid{color:#b45309;background:#fef3c7;}
+  .status-free{color:#047857;background:#d1fae5;}
+  .card-badges{display:flex;gap:4px;flex-wrap:wrap;}
   .card-category{display:inline-block;font-size:11px;color:var(--accent);background:var(--accent-light);padding:3px 10px;border-radius:6px;align-self:flex-start;font-weight:600;}
   .card-desc{font-size:13px;color:var(--text2);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .card-address{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px;}
@@ -130,6 +133,7 @@
   .modal-close:hover{color:var(--text);background:var(--bg);}
   .modal-body{padding:18px 22px 24px;display:flex;flex-direction:column;gap:14px;}
   .field{display:flex;flex-direction:column;gap:6px;}
+  .row-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   label{font-size:13px;font-weight:600;}
   label span{font-weight:400;color:var(--text2);}
   input[type=text],input[type=url],input[type=number],textarea,select{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:inherit;transition:var(--transition);outline:none;direction:rtl;}
@@ -197,6 +201,7 @@
     .detail-img,.detail-img-map{height:200px;}
     .toolbar{gap:8px;}
     .toolbar-title{font-size:18px;}
+    .row-fields{grid-template-columns:1fr;}
   }
 </style>
 </head>
@@ -261,7 +266,6 @@
   </div>
 </div>
 
-<!-- Add Modal -->
 <div class="modal-backdrop" id="modal">
   <div class="modal">
     <div class="modal-header">
@@ -274,9 +278,18 @@
         <label>שם המקום <span style="color:var(--closed)">*</span></label>
         <input type="text" id="f-name" placeholder="לדוגמה: עין עבדת">
       </div>
-      <div class="field">
-        <label>קטגוריה <span style="color:var(--closed)">*</span></label>
-        <select id="f-category"><option value="">בחר קטגוריה</option></select>
+      <div class="row-fields">
+        <div class="field">
+          <label>קטגוריה <span style="color:var(--closed)">*</span></label>
+          <select id="f-category"><option value="">בחר קטגוריה</option></select>
+        </div>
+        <div class="field">
+          <label>עלות</label>
+          <select id="f-is-paid">
+            <option value="0">חינם</option>
+            <option value="1">בתשלום</option>
+          </select>
+        </div>
       </div>
       <div class="field">
         <label>תמונה <span>(אופציונלי)</span></label>
@@ -290,9 +303,15 @@
         <label>תיאור <span>(אופציונלי)</span></label>
         <textarea id="f-desc" placeholder="ספרו על המקום, מה מיוחד בו..."></textarea>
       </div>
-      <div class="field">
-        <label>כתובת <span>(אופציונלי)</span></label>
-        <input type="text" id="f-address" placeholder="לדוגמה: מדבר הנגב">
+      <div class="row-fields">
+        <div class="field">
+          <label>כתובת <span>(אופציונלי)</span></label>
+          <input type="text" id="f-address" placeholder="לדוגמה: מדבר הנגב">
+        </div>
+        <div class="field">
+          <label>שעות פתיחה <span>(אופציונלי)</span></label>
+          <input type="text" id="f-hours" placeholder="לדוגמה: א'-ה' 08:00-17:00">
+        </div>
       </div>
       <div class="field">
         <label>קישור <span style="color:var(--closed)">*</span> <span>(אתר, גוגל מפות, וכו')</span></label>
@@ -334,7 +353,6 @@
   </div>
 </div>
 
-<!-- Detail Modal -->
 <div class="modal-backdrop" id="detail-modal">
   <div class="modal">
     <div id="detail-content"></div>
@@ -342,7 +360,7 @@
 </div>
 
 <script>
-const API = 'https://dhoc97909.pythonanywhere.com';
+const API = 'http://127.0.0.1:5000'; // שים לב לשנות לפי כתובת השרת האמיתית שלך כמו שהיה
 const GOOGLE_CLIENT_ID = '426523025549-7c50rkn7cun4vmm2r802u0ij6egjehtg.apps.googleusercontent.com';
 const CATEGORIES = ['מעיינות ורטובים','אקשן ואקסטרים','נוף ותצפיות','חופים ומים','הרים וטבע','ערים ותרבות','אוכל ושתייה','אחר'];
 
@@ -471,9 +489,13 @@ function renderGrid() {
 }
 
 function cardHTML(loc) {
-  const status=loc.is_open
-    ?'<span class="status-badge status-open">פתוח</span>'
-    :'<span class="status-badge status-closed">סגור</span>';
+  const statusBadge = loc.is_open
+    ? '<span class="status-badge status-open">פתוח</span>'
+    : '<span class="status-badge status-closed">סגור</span>';
+  const priceBadge = loc.is_paid
+    ? '<span class="status-badge status-paid">בתשלום</span>'
+    : '<span class="status-badge status-free">חינם</span>';
+  
   let imgSection;
   if (loc.image_url) {
     imgSection=`<div class="card-img"><img src="${API}${loc.image_url}" alt="${escHtml(loc.name)}" loading="lazy"></div>`;
@@ -482,17 +504,23 @@ function cardHTML(loc) {
   } else {
     imgSection=`<div class="card-img-placeholder"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg></div>`;
   }
+  
   const likedClass=loc.liked_by_me?'liked':'';
   const isOwner=state.user&&state.user.user_id===loc.user_id;
   const delBtn=isOwner?`<button class="btn-delete" onclick="event.stopPropagation();deleteLocation(${loc.id})">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6M14 11v6"/></svg></button>`:'';
+  
   const addr=loc.address?`<div class="card-address"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>${escHtml(loc.address)}</div>`:'';
   const desc=loc.description?`<div class="card-desc">${escHtml(loc.description)}</div>`:'';
   const cat=loc.category?`<span class="card-category">${escHtml(loc.category)}</span>`:'';
+  
   return `<div class="card" id="card-${loc.id}" onclick="openDetail(${loc.id})">
     ${imgSection}
     <div class="card-body">
-      <div class="card-header"><span class="card-name">${escHtml(loc.name)}</span>${status}</div>
+      <div class="card-header">
+        <span class="card-name">${escHtml(loc.name)}</span>
+        <div class="card-badges">${priceBadge}${statusBadge}</div>
+      </div>
       ${cat}${desc}${addr}
       <div class="card-footer">
         <div class="card-author">
@@ -526,9 +554,14 @@ function initCardMap(loc) {
 function openDetail(id) {
   const loc=state.locations.find(l=>l.id===id);
   if(!loc) return;
-  const status=loc.is_open
+  
+  const statusBadge=loc.is_open
     ?'<span class="status-badge status-open">פתוח</span>'
     :'<span class="status-badge status-closed">סגור</span>';
+  const priceBadge=loc.is_paid
+    ?'<span class="status-badge status-paid">בתשלום</span>'
+    :'<span class="status-badge status-free">חינם</span>';
+    
   const cat=loc.category?`<span class="card-category">${escHtml(loc.category)}</span>`:'';
   const likedClass=loc.liked_by_me?'liked':'';
   let topSection='';
@@ -537,8 +570,11 @@ function openDetail(id) {
   } else if (loc.lat&&loc.lng) {
     topSection=`<div class="detail-img-map" id="detail-map"></div>`;
   }
+  
   const addrRow=loc.address?`<div class="detail-row"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>${escHtml(loc.address)}</div>`:'';
+  const hoursRow=loc.hours?`<div class="detail-row"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${escHtml(loc.hours)}</div>`:'';
   const linkRow=loc.link?`<div class="detail-row"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><a href="${escHtml(loc.link)}" target="_blank" rel="noopener">פתח קישור</a></div>`:'';
+  
   const isOwner=state.user&&state.user.user_id===loc.user_id;
   const delBtn=isOwner?`<button class="btn-delete" onclick="deleteLocation(${loc.id});closeDetail()" style="margin-right:auto;padding:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>`:'';
 
@@ -549,10 +585,15 @@ function openDetail(id) {
     </div>
     ${topSection}
     <div class="detail-body">
-      <div class="detail-header"><span class="detail-name">${escHtml(loc.name)}</span>${status}</div>
+      <div class="detail-header">
+        <span class="detail-name">${escHtml(loc.name)}</span>
+        <div class="card-badges">${priceBadge}${statusBadge}</div>
+      </div>
       <div class="detail-meta">${cat}<span style="font-size:12px;color:var(--text2)">נוסף על ידי ${escHtml(loc.user_name||'')}</span></div>
       ${loc.description?`<div class="detail-desc">${escHtml(loc.description)}</div>`:''}
-      ${addrRow}${linkRow}
+      ${addrRow}
+      ${hoursRow}
+      ${linkRow}
       <div class="detail-actions">
         <button class="btn-like-lg ${likedClass}" id="detail-like-${loc.id}" onclick="toggleLike(${loc.id})">
           <svg class="heart" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -622,10 +663,11 @@ document.getElementById('modal').addEventListener('click',e=>{
 });
 
 function clearForm() {
-  ['f-name','f-address','f-link','f-desc','f-lat','f-lng','map-search-input'].forEach(id=>{
+  ['f-name','f-address','f-hours','f-link','f-desc','f-lat','f-lng','map-search-input'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.value='';
   });
   document.getElementById('f-category').value='';
+  document.getElementById('f-is-paid').value='0';
   document.getElementById('f-open').checked=true;
   document.getElementById('f-image').value='';
   document.getElementById('img-preview').style.display='none';
@@ -717,12 +759,15 @@ async function submitLocation() {
       image_url=upData.url;
       btn.textContent='שומר...';
     }
+    
     await apiFetch('/api/locations','POST',{
       name, category:cat,
       description:document.getElementById('f-desc').value.trim(),
       address:document.getElementById('f-address').value.trim(),
+      hours:document.getElementById('f-hours').value.trim(),
       link, lat:parseFloat(lat), lng:parseFloat(lng),
       is_open:document.getElementById('f-open').checked,
+      is_paid:document.getElementById('f-is-paid').value === '1',
       image_url,
     });
     document.getElementById('modal').classList.remove('open');
