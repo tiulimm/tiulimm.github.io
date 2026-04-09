@@ -541,8 +541,16 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 function initGoogle(){
-  google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID,callback:handleGoogleCred});
-  google.accounts.id.renderButton(document.getElementById('google-btn'),{theme:'outline',size:'large',locale:'he',shape:'rectangular',width:280});
+  try{
+    google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID,callback:handleGoogleCred});
+    google.accounts.id.renderButton(document.getElementById('google-btn'),{theme:'outline',size:'large',locale:'he',shape:'rectangular',width:280});
+  }catch(e){googleBlocked();}
+}
+function googleBlocked(){
+  const el=document.getElementById('google-btn');
+  if(el) el.innerHTML='<div style="font-size:13px;color:var(--text2);padding:6px 0;text-align:center">כניסה עם גוגל חסומה (חוסם פרסומות).<br>השתמש באימייל/סיסמה.</div>';
+  const orEl=document.querySelector('.auth-or');
+  if(orEl) orEl.style.display='none';
 }
 
 function switchTab(tab,btn){
@@ -1125,6 +1133,15 @@ async function apiFetch(path,method,body){
 }
 function escHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 </script>
-<script src="https://accounts.google.com/gsi/client" async defer onload="initGoogle()"></script>
+<script>
+(function(){
+  var s=document.createElement('script');
+  s.src='https://accounts.google.com/gsi/client';
+  s.async=true; s.defer=true;
+  s.onload=function(){initGoogle();};
+  s.onerror=function(){googleBlocked();};
+  document.head.appendChild(s);
+})();
+</script>
 </body>
 </html>
