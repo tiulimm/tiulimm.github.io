@@ -548,7 +548,7 @@ function initGoogle(){
 }
 function googleBlocked(){
   const el=document.getElementById('google-btn');
-  if(el) el.innerHTML='<div style="font-size:13px;color:var(--text2);padding:6px 0;text-align:center">כניסה עם גוגל חסומה (חוסם פרסומות).<br>השתמש באימייל/סיסמה.</div>';
+  if(el) el.innerHTML='<div style="font-size:13px;color:var(--text2);padding:6px 0;text-align:center">כניסה עם גוגל חסומה (חוסם פרסומות).<br>השתמש באימייל וסיסמה.</div>';
   const orEl=document.querySelector('.auth-or');
   if(orEl) orEl.style.display='none';
 }
@@ -648,7 +648,7 @@ function showApp(){
   document.getElementById('app').style.display='block';
   document.getElementById('cat-nav').style.display='flex';
   if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(p=>{state.userLat=p.coords.latitude;state.userLng=p.coords.longitude;},{});
+    navigator.geolocation.getCurrentPosition(p=>{state.userLat=p.coords.latitude;state.userLng=p.coords.longitude;},()=>{},{timeout:8000});
   }
   startPolling();
 }
@@ -723,6 +723,7 @@ function renderGrid(){
 }
 
 function getImgs(loc){if(!loc.image_url)return[];return loc.image_url.split(',').map(s=>s.trim()).filter(Boolean);}
+function imgSrc(u){return(u.startsWith('http')||u.startsWith('//'))? u : API+u;}
 
 function cardHTML(loc){
   const imgs=getImgs(loc);
@@ -731,7 +732,7 @@ function cardHTML(loc){
   const region=loc.region?`<span class="badge b-region">${escHtml(loc.region)}</span>`:'';
   let imgSection;
   if(imgs.length){
-    imgSection=`<div class="card-img"><img src="${API}${imgs[0]}" alt="${escHtml(loc.name)}" loading="lazy">${imgs.length>1?`<span class="card-img-count">📷 ${imgs.length}</span>`:''}</div>`;
+    imgSection=`<div class="card-img"><img src="${imgSrc(imgs[0])}" alt="${escHtml(loc.name)}" loading="lazy">${imgs.length>1?`<span class="card-img-count">📷 ${imgs.length}</span>`:''}</div>`;
   }else if(loc.lat&&loc.lng){
     imgSection=`<div class="card-img-map" id="cmap-${loc.id}"></div>`;
   }else{
@@ -793,7 +794,7 @@ function openDetail(id){
   if(imgs.length){
     const dots=imgs.length>1?`<div class="gallery-dots">${imgs.map((_,i)=>`<span class="${i===0?'act':''}" onclick="scrollGallery(${i})"></span>`).join('')}</div>`:'';
     topHTML=`<div class="gallery-wrap">
-      <div class="gallery-scroll" id="gallery-scroll">${imgs.map(u=>`<img src="${API}${u}" alt="${escHtml(loc.name)}">`).join('')}</div>
+      <div class="gallery-scroll" id="gallery-scroll">${imgs.map(u=>`<img src="${imgSrc(u)}" alt="${escHtml(loc.name)}">`).join('')}</div>
       ${dots}
     </div>`;
   }else if(loc.lat&&loc.lng){
