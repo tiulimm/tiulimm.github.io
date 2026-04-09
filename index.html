@@ -31,7 +31,7 @@
   html,body{
     font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     background:var(--bg);color:var(--text);min-height:100vh;direction:rtl;
-    overflow-x:hidden;width:100%; /* תוקן: למנוע גלילה אופקית */
+    overflow-x:hidden;width:100%;
   }
   a{color:inherit;}img{max-width:100%;}
 
@@ -50,7 +50,7 @@
   .user-pic{width:32px;height:32px;border-radius:50%;object-fit:cover;border:2px solid var(--border);}
   .user-name{font-size:13px;color:var(--text2);}
   .btn-sign-out{font-size:12px;color:var(--text2);background:none;border:1px solid var(--border);padding:5px 12px;border-radius:8px;cursor:pointer;transition:var(--transition);}
-  .btn-sign-out:hover{border-color:var(--text2);color:var(--text);}
+  .btn-sign-out:hover{border-color:var(--text2);color:var(--text);background:var(--bg);}
 
   /* Auth */
   #auth-wall{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
@@ -66,7 +66,7 @@
   .contribute-card{background:var(--bg2);border:1px solid var(--border);border-radius:24px;padding:52px 44px;max-width:500px;width:100%;text-align:center;box-shadow:var(--shadow-lg);}
   .contribute-card h2{font-size:24px;font-weight:800;margin-bottom:12px;}
   .contribute-card p{color:var(--text2);margin-bottom:28px;font-size:15px;line-height:1.65;}
-
+  
   /* App */
   #app{display:none;}
   .app-inner{max-width:1200px;margin:0 auto;padding:28px 24px;}
@@ -229,7 +229,7 @@
       <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
     </div>
     <h1>מטיילים</h1>
-    <p>גלו ושתפו מקומות מדהימים ברחבי הארץ.<br>כדי לראות את המפה יש לתרום מקום אחד לפחות.</p>
+    <p>גלו ושתפו מקומות מדהימים ברחבי הארץ.<br>כדי לראות את המפה יש להתחבר.</p>
     <div id="google-btn"></div>
   </div>
 </div>
@@ -237,11 +237,16 @@
 <div id="contribute-wall">
   <div class="contribute-card">
     <h2>ברוך הבא! 👋</h2>
-    <p>לפני שאפשר לראות את המקומות, תוסיפו מקום אחד שאתם ממליצים עליו. כך הקהילה נבנית ביחד.</p>
-    <button class="btn-add" onclick="openModal(true)">
-      <svg viewBox="0 0 24 24" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      הוספת מקום ראשון
-    </button>
+    <p>כדי שהקהילה תפרח, נשמח אם תשתפו מקום שאתם אוהבים. אפשר גם לעשות זאת מאוחר יותר.</p>
+    <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+      <button class="btn-add" onclick="openModal(true)">
+        <svg viewBox="0 0 24 24" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        הוספת מקום ראשון
+      </button>
+      <button class="btn-sign-out" style="padding:10px 20px; font-size:14px;" onclick="skipContribute()">
+        דלג לבינתיים
+      </button>
+    </div>
   </div>
 </div>
 
@@ -360,7 +365,7 @@
 </div>
 
 <script>
-const API = 'http://127.0.0.1:5000'; // שים לב לשנות לפי כתובת השרת האמיתית שלך כמו שהיה
+const API = 'http://127.0.0.1:5000'; // ודא ששרת ה-Python פועל בכתובת הזו
 const GOOGLE_CLIENT_ID = '426523025549-7c50rkn7cun4vmm2r802u0ij6egjehtg.apps.googleusercontent.com';
 const CATEGORIES = ['מעיינות ורטובים','אקשן ואקסטרים','נוף ותצפיות','חופים ומים','הרים וטבע','ערים ותרבות','אוכל ושתייה','אחר'];
 
@@ -373,28 +378,62 @@ let state = {
 let isFirstContrib = false;
 let searchTimer = null;
 
+// בדוק אם המשתמש כבר מחובר ברגע שהדף נטען
+document.addEventListener('DOMContentLoaded', () => {
+  buildFilters();
+  const savedToken = localStorage.getItem('token');
+  if (savedToken) {
+    state.token = savedToken;
+    verifyStoredToken(savedToken);
+  }
+});
+
 function initGoogle() {
   google.accounts.id.initialize({
     client_id: GOOGLE_CLIENT_ID,
     callback: handleGoogleCredential,
-    auto_select: true,
+    // ביטלנו את הקפיצה האוטומטית שדורשת הרשאות מיוחדות במכשיר הנייד:
+    // auto_select: true 
   });
   google.accounts.id.renderButton(document.getElementById('google-btn'), {
     theme:'outline', size:'large', locale:'he', shape:'rectangular', width:280,
   });
-  google.accounts.id.prompt();
 }
-document.addEventListener('DOMContentLoaded', buildFilters);
+
+async function verifyStoredToken(token) {
+  try {
+    const res = await apiFetch('/api/auth', 'POST', {token});
+    state.user = res;
+    showUserArea();
+    if (!res.has_contributed) showContributeWall();
+    else { showApp(); loadLocations(); }
+  } catch(e) {
+    if (e.message.includes('Failed to fetch')) {
+      alert('שגיאת תקשורת: הדפדפן לא מצליח להתחבר לשרת. ודאו שקובץ ה-Python פועל ברקע (app.py).');
+    } else {
+      // האסימון פג תוקף או שגוי
+      localStorage.removeItem('token');
+      state.token = null;
+    }
+  }
+}
 
 async function handleGoogleCredential(resp) {
   state.token = resp.credential;
+  localStorage.setItem('token', state.token); // שמירת האסימון לפעם הבאה
   try {
     const res = await apiFetch('/api/auth','POST',{token:state.token});
     state.user = res;
     showUserArea();
     if (!res.has_contributed) showContributeWall();
     else { showApp(); loadLocations(); }
-  } catch(e) { alert('שגיאה בהתחברות: '+e.message); }
+  } catch(e) { 
+    if (e.message.includes('Failed to fetch')) {
+        alert('שגיאת תקשורת: הדפדפן לא מצליח להתחבר לשרת. ודאו שקובץ ה-Python פועל ברקע (app.py).');
+    } else {
+        alert('שגיאה בהתחברות: '+e.message); 
+    }
+  }
 }
 
 function showUserArea() {
@@ -403,19 +442,28 @@ function showUserArea() {
     <span class="user-name">${escHtml(state.user.name)}</span>
     <button class="btn-sign-out" onclick="signOut()">יציאה</button>`;
 }
+
 function signOut() {
   google.accounts.id.disableAutoSelect();
+  localStorage.removeItem('token'); // מחיקת השמירה מהזיכרון
   state.user=null; state.token=null;
   document.getElementById('user-area').innerHTML='';
   document.getElementById('auth-wall').style.display='flex';
   document.getElementById('contribute-wall').style.display='none';
   document.getElementById('app').style.display='none';
 }
+
 function showContributeWall() {
   document.getElementById('auth-wall').style.display='none';
   document.getElementById('contribute-wall').style.display='flex';
   document.getElementById('app').style.display='none';
 }
+
+function skipContribute() {
+  showApp();
+  loadLocations();
+}
+
 function showApp() {
   document.getElementById('auth-wall').style.display='none';
   document.getElementById('contribute-wall').style.display='none';
@@ -459,7 +507,11 @@ async function loadLocations() {
     state.locations = await apiFetch(url,'GET');
     renderGrid();
   } catch(e) {
-    document.getElementById('grid').innerHTML=`<div class="empty"><h3>שגיאה בטעינה</h3><p>${e.message}</p></div>`;
+    if (e.message.includes('Failed to fetch')) {
+        document.getElementById('grid').innerHTML=`<div class="empty"><h3>שגיאת תקשורת</h3><p>לא ניתן להתחבר לשרת. ודאו שהשרת פעיל.</p></div>`;
+    } else {
+        document.getElementById('grid').innerHTML=`<div class="empty"><h3>שגיאה בטעינה</h3><p>${e.message}</p></div>`;
+    }
   }
 }
 
