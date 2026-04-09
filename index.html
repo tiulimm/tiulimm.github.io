@@ -1361,6 +1361,33 @@ async function submitLocation(){
   if(!cat){showFormErr('יש לבחור קטגוריה');goStep(1);return;}
   if(!lat||!lng){showFormErr('יש לסמן מיקום על המפה');return;}
 
+  // ── בדיקת כפילויות ──
+  if(!state.editingId){
+    const newLat=parseFloat(lat), newLng=parseFloat(lng);
+    const nameLower=name.toLowerCase().replace(/\s+/g,'');
+    const dupByName=state.locations.find(l=>
+      l.name.toLowerCase().replace(/\s+/g,'')===nameLower
+    );
+    const dupByCoords=state.locations.find(l=>{
+      if(!l.lat||!l.lng)return false;
+      // Haversine — סף 100 מטר
+      const R=6371000;
+      const dLat=(newLat-l.lat)*Math.PI/180;
+      const dLng=(newLng-l.lng)*Math.PI/180;
+      const a=Math.sin(dLat/2)**2+Math.cos(l.lat*Math.PI/180)*Math.cos(newLat*Math.PI/180)*Math.sin(dLng/2)**2;
+      const dist=R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+      return dist<100;
+    });
+    if(dupByName){
+      showFormErr(`⚠️ מקום בשם "${dupByName.name}" כבר קיים במערכת.`);
+      goStep(1);return;
+    }
+    if(dupByCoords){
+      showFormErr(`⚠️ מקום קרוב מאוד כבר קיים: "${dupByCoords.name}" (פחות מ-100 מטר).`);
+      return;
+    }
+  }
+
   const btn=document.getElementById('submit-btn');
   btn.disabled=true;btn.textContent='שומר...';
   try{
