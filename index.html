@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>מקומות שווים לטיול</title>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -45,7 +44,6 @@
          background: var(--bg); color: var(--text); min-height: 100vh; direction: rtl; }
   a { color: inherit; }
 
-  /* ---- Header ---- */
   header {
     background: var(--bg2);
     border-bottom: 1px solid var(--border);
@@ -57,15 +55,9 @@
     height: 60px;
     display: flex; align-items: center; justify-content: space-between;
   }
-  .site-name {
-    font-size: 17px; font-weight: 600; letter-spacing: -0.3px;
-    color: var(--text);
-  }
+  .site-name { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; color: var(--text); }
   .user-area { display: flex; align-items: center; gap: 12px; }
-  .user-pic {
-    width: 32px; height: 32px; border-radius: 50%;
-    object-fit: cover; border: 2px solid var(--border);
-  }
+  .user-pic { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
   .user-name { font-size: 14px; color: var(--text2); }
   .btn-sign-out {
     font-size: 13px; color: var(--text2);
@@ -75,7 +67,6 @@
   }
   .btn-sign-out:hover { border-color: var(--text2); color: var(--text); }
 
-  /* ---- Auth wall ---- */
   #auth-wall {
     min-height: 100vh; display: flex; align-items: center; justify-content: center;
     padding: 24px;
@@ -88,8 +79,8 @@
   }
   .auth-card h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
   .auth-card p { color: var(--text2); margin-bottom: 32px; font-size: 15px; line-height: 1.6; }
+  #google-btn { display: flex; justify-content: center; min-height: 44px; }
 
-  /* ---- Contribute wall ---- */
   #contribute-wall {
     min-height: 80vh; display: none; align-items: center; justify-content: center;
     padding: 24px;
@@ -103,11 +94,9 @@
   .contribute-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
   .contribute-card p { color: var(--text2); margin-bottom: 28px; font-size: 15px; line-height: 1.6; }
 
-  /* ---- Main app ---- */
   #app { display: none; }
   .app-inner { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
 
-  /* ---- Toolbar ---- */
   .toolbar {
     display: flex; align-items: center; gap: 12px;
     flex-wrap: wrap; margin-bottom: 28px;
@@ -121,10 +110,7 @@
   }
   .btn-add:hover { opacity: 0.85; }
 
-  /* ---- Filter pills ---- */
-  .filters {
-    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px;
-  }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
   .filter-pill {
     font-size: 13px; padding: 6px 14px; border-radius: 20px;
     border: 1px solid var(--border); background: var(--bg2);
@@ -132,11 +118,8 @@
     white-space: nowrap;
   }
   .filter-pill:hover { border-color: var(--text2); color: var(--text); }
-  .filter-pill.active {
-    background: var(--accent); color: var(--bg2); border-color: var(--accent);
-  }
+  .filter-pill.active { background: var(--accent); color: var(--bg2); border-color: var(--accent); }
 
-  /* ---- Grid ---- */
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -149,10 +132,7 @@
     display: flex; flex-direction: column;
   }
   .card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-  .card-map {
-    height: 160px; background: #e8e6e0;
-    position: relative; flex-shrink: 0;
-  }
+  .card-map { height: 160px; background: #e8e6e0; position: relative; flex-shrink: 0; }
   .card-map .leaflet-container { height: 100%; width: 100%; border-radius: 0; }
   .card-map-placeholder {
     height: 100%; display: flex; align-items: center; justify-content: center;
@@ -211,7 +191,6 @@
   }
   .btn-delete:hover { color: var(--closed); background: var(--closed-bg); }
 
-  /* ---- Modal ---- */
   .modal-backdrop {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.5); z-index: 200;
@@ -266,10 +245,7 @@
     border: 1px solid var(--border); border-radius: 10px;
   }
   .toggle-label { font-size: 14px; color: var(--text); }
-  .toggle {
-    position: relative; width: 44px; height: 24px;
-    cursor: pointer;
-  }
+  .toggle { position: relative; width: 44px; height: 24px; cursor: pointer; }
   .toggle input { opacity: 0; width: 0; height: 0; }
   .toggle-track {
     position: absolute; inset: 0; background: var(--border);
@@ -293,16 +269,12 @@
   .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
   .error-msg { font-size: 13px; color: var(--closed); padding: 10px 14px;
                background: var(--closed-bg); border-radius: 8px; }
-
-  /* ---- Empty state ---- */
   .empty {
     text-align: center; padding: 80px 24px; color: var(--text2);
     grid-column: 1 / -1;
   }
   .empty h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
   .empty p { font-size: 15px; }
-
-  /* ---- Loading ---- */
   .loading { grid-column: 1 / -1; text-align: center; padding: 60px; color: var(--text2); font-size: 15px; }
 
   @media (max-width: 600px) {
@@ -317,7 +289,6 @@
 </head>
 <body>
 
-<!-- Header -->
 <header>
   <div class="header-inner">
     <span class="site-name">מקומות שווים</span>
@@ -325,7 +296,6 @@
   </div>
 </header>
 
-<!-- Auth wall -->
 <div id="auth-wall">
   <div class="auth-card">
     <h1>מקומות שווים לטיול</h1>
@@ -334,7 +304,6 @@
   </div>
 </div>
 
-<!-- Contribute wall -->
 <div id="contribute-wall">
   <div class="contribute-card">
     <h2>ברוך הבא!</h2>
@@ -343,7 +312,6 @@
   </div>
 </div>
 
-<!-- Main app -->
 <div id="app">
   <div class="app-inner">
     <div class="toolbar">
@@ -357,7 +325,6 @@
   </div>
 </div>
 
-<!-- Add location modal -->
 <div class="modal-backdrop" id="modal">
   <div class="modal">
     <div class="modal-header">
@@ -366,34 +333,28 @@
     </div>
     <div class="modal-body">
       <div id="form-error" class="error-msg" style="display:none"></div>
-
       <div class="field">
         <label>שם המקום <span style="color:var(--closed)">*</span></label>
         <input type="text" id="f-name" placeholder="לדוגמה: עין עבדת">
       </div>
-
       <div class="field">
         <label>קטגוריה <span style="color:var(--closed)">*</span></label>
         <select id="f-category">
           <option value="">בחר קטגוריה</option>
         </select>
       </div>
-
       <div class="field">
         <label>תיאור <span>(אופציונלי)</span></label>
         <textarea id="f-desc" placeholder="ספרו על המקום, מה מיוחד בו..."></textarea>
       </div>
-
       <div class="field">
         <label>כתובת <span>(אופציונלי)</span></label>
         <input type="text" id="f-address" placeholder="לדוגמה: מדבר הנגב">
       </div>
-
       <div class="field">
         <label>קישור <span style="color:var(--closed)">*</span> <span>(אתר, גוגל מפות, וכו')</span></label>
         <input type="url" id="f-link" placeholder="https://">
       </div>
-
       <div class="field">
         <label>מיקום על המפה <span>(לחץ למיקום מדויק)</span></label>
         <div class="map-picker" id="map-picker">
@@ -410,7 +371,6 @@
           </div>
         </div>
       </div>
-
       <div class="field">
         <div class="toggle-row">
           <span class="toggle-label">המקום פתוח לקהל</span>
@@ -421,12 +381,12 @@
           </label>
         </div>
       </div>
-
       <button class="btn-submit" id="submit-btn" onclick="submitLocation()">שמירת המקום</button>
     </div>
   </div>
 </div>
 
+<!-- Google Sign-In loaded LAST, with onload callback -->
 <script>
 const API = 'https://dhoc97909.pythonanywhere.com';
 const GOOGLE_CLIENT_ID = '426523025549-7c50rkn7cun4vmm2r802u0ij6egjehtg.apps.googleusercontent.com';
@@ -444,11 +404,10 @@ let state = {
   pickerMap: null,
   pickerMarker: null,
   cardMaps: {},
-  isFirstContrib: false,
 };
 
-// ---- Google Sign-In ----
-window.onload = () => {
+// THE FIX: called by onload on the script tag below — guaranteed to run after Google SDK is ready
+function initGoogle() {
   google.accounts.id.initialize({
     client_id: GOOGLE_CLIENT_ID,
     callback: handleGoogleCredential,
@@ -459,8 +418,10 @@ window.onload = () => {
     shape: 'rectangular', width: 280,
   });
   google.accounts.id.prompt();
-  buildFilters();
-};
+}
+
+// Build filters & category select on DOM ready (no Google dependency)
+document.addEventListener('DOMContentLoaded', buildFilters);
 
 async function handleGoogleCredential(resp) {
   state.token = resp.credential;
@@ -508,20 +469,22 @@ function showApp() {
   document.getElementById('app').style.display = 'block';
 }
 
-// ---- Filters ----
 function buildFilters() {
   const el = document.getElementById('filters');
-  const all = `<button class="filter-pill active" data-cat="" onclick="setFilter(this,'')">הכל</button>`;
+  if (!el) return;
+  const all = `<button class="filter-pill active" onclick="setFilter(this,'')">הכל</button>`;
   const pills = CATEGORIES.map(c =>
-    `<button class="filter-pill" data-cat="${c}" onclick="setFilter(this,'${c}')">${c}</button>`
+    `<button class="filter-pill" onclick="setFilter(this,'${c}')">${c}</button>`
   ).join('');
   el.innerHTML = all + pills;
   const sel = document.getElementById('f-category');
-  CATEGORIES.forEach(c => {
-    const opt = document.createElement('option');
-    opt.value = c; opt.textContent = c;
-    sel.appendChild(opt);
-  });
+  if (sel) {
+    CATEGORIES.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c; opt.textContent = c;
+      sel.appendChild(opt);
+    });
+  }
 }
 
 function setFilter(btn, cat) {
@@ -531,7 +494,6 @@ function setFilter(btn, cat) {
   loadLocations();
 }
 
-// ---- Locations ----
 async function loadLocations() {
   document.getElementById('grid').innerHTML = '<div class="loading">טוען מקומות...</div>';
   try {
@@ -566,10 +528,10 @@ function cardHTML(loc) {
     ? `<div class="card-map" id="cmap-${loc.id}"></div>`
     : `<div class="card-map"><div class="card-map-placeholder">אין מיקום מדויק</div></div>`;
   const link = loc.link
-    ? `<div class="card-link"><a href="${loc.link}" target="_blank" rel="noopener">${loc.link}</a></div>` : '';
-  const addr = loc.address ? `<div class="card-address">${loc.address}</div>` : '';
-  const desc = loc.description ? `<div class="card-desc">${loc.description}</div>` : '';
-  const cat = loc.category ? `<span class="card-category">${loc.category}</span>` : '';
+    ? `<div class="card-link"><a href="${loc.link}" target="_blank" rel="noopener">${escHtml(loc.link)}</a></div>` : '';
+  const addr = loc.address ? `<div class="card-address">${escHtml(loc.address)}</div>` : '';
+  const desc = loc.description ? `<div class="card-desc">${escHtml(loc.description)}</div>` : '';
+  const cat = loc.category ? `<span class="card-category">${escHtml(loc.category)}</span>` : '';
   const likedClass = loc.liked_by_me ? 'liked' : '';
   const isOwner = state.user && state.user.user_id === loc.user_id;
   const delBtn = isOwner
@@ -622,7 +584,6 @@ function initCardMap(loc) {
   }, 50);
 }
 
-// ---- Like ----
 async function toggleLike(id) {
   if (!state.token) return;
   try {
@@ -636,7 +597,6 @@ async function toggleLike(id) {
   } catch(e) {}
 }
 
-// ---- Delete ----
 async function deleteLocation(id) {
   if (!confirm('למחוק את המקום הזה?')) return;
   try {
@@ -648,7 +608,6 @@ async function deleteLocation(id) {
   } catch(e) { alert('שגיאה: ' + e.message); }
 }
 
-// ---- Modal ----
 let isFirstContrib = false;
 function openModal(firstContrib) {
   isFirstContrib = firstContrib;
@@ -704,7 +663,6 @@ function initPickerMap() {
   state.pickerMap = m;
 }
 
-// sync map if coords typed manually
 ['f-lat','f-lng'].forEach(id => {
   document.getElementById(id).addEventListener('change', () => {
     const lat = parseFloat(document.getElementById('f-lat').value);
@@ -763,7 +721,6 @@ function showErr(msg) {
   el.textContent = msg; el.style.display = 'block';
 }
 
-// ---- API helper ----
 async function apiFetch(path, method, body) {
   const opts = {
     method,
@@ -778,8 +735,12 @@ async function apiFetch(path, method, body) {
 }
 
 function escHtml(s) {
-  return (s||'').replace(/&/g,'&').replace(//g,'>').replace(/"/g,'"');
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 </script>
+
+<!-- Google GSI loaded LAST with onload=initGoogle — this is the key fix -->
+<script src="https://accounts.google.com/gsi/client" async defer onload="initGoogle()"></script>
+
 </body>
 </html>
