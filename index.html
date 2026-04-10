@@ -287,6 +287,22 @@ textarea{min-height:90px;resize:vertical}
 .author-meta{display:flex;flex-direction:column;gap:1px}
 .a-posts{font-size:10px;color:var(--text2);font-weight:500}
 
+.announce-bar{background:linear-gradient(135deg,#7c3aed15,#6d28d910);border:1.5px solid #7c3aed30;border-radius:12px;padding:12px 16px;display:flex;align-items:flex-start;gap:10px;margin-bottom:18px;cursor:pointer;transition:.2s}
+.announce-bar:hover{border-color:#7c3aed60}
+.announce-bar-icon{width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.announce-bar-icon svg{width:16px;height:16px;stroke:#fff;fill:none}
+.announce-bar-body{flex:1;min-width:0}
+.announce-bar-title{font-size:13px;font-weight:800;color:#6d28d9}
+.announce-bar-text{font-size:13px;color:var(--text);line-height:1.5;margin-top:2px;white-space:pre-wrap;word-break:break-word}
+.announce-bar-date{font-size:11px;color:var(--text2);margin-top:4px}
+@media(prefers-color-scheme:dark){.announce-bar{background:#2d1b6920;border-color:#7c3aed40}.announce-bar-title{color:#a78bfa}}
+.btn-admin-wrap{position:relative;display:inline-flex}
+.admin-notif-dot{position:absolute;top:-3px;right:-3px;width:9px;height:9px;background:#ef4444;border-radius:50%;border:2px solid var(--bg2);display:none}
+.admin-notif-dot.show{display:block}
+
+.audience-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:2px}
+.b-audience{color:#0369a1;background:#e0f2fe;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px}
+
 /* ── REVIEWS ── */
 .reviews-section{border-top:1px solid var(--border);padding:20px 22px;display:flex;flex-direction:column;gap:14px}
 .reviews-title{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px}
@@ -545,6 +561,7 @@ textarea{min-height:90px;resize:vertical}
         </button>
       </div>
     </div>
+    <div id="announce-bar-wrap"></div>
     <div class="grid" id="grid"></div>
   </div>
 </div>
@@ -592,6 +609,16 @@ textarea{min-height:90px;resize:vertical}
               <option value="1">בתשלום</option>
             </select>
           </div>
+        </div>
+        <div class="field">
+          <label>מיועד ל <span>(אופציונלי)</span></label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:2px" id="f-audience-wrap">
+            <label style="display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" value="משפחות" onchange="updateAudience()"> משפחות</label>
+            <label style="display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" value="צעירים" onchange="updateAudience()"> צעירים</label>
+            <label style="display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" value="מיטיבי לכת" onchange="updateAudience()"> מיטיבי לכת</label>
+            <label style="display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" value="עגלות וכיסאות גלגלים" onchange="updateAudience()"> עגלות / כיסאות גלגלים</label>
+          </div>
+          <input type="hidden" id="f-audience">
         </div>
         <div class="field">
           <label>תיאור <span>(אופציונלי)</span></label>
@@ -865,7 +892,7 @@ function showUserArea(){
   document.getElementById('user-area').innerHTML=`
     <img class="user-pic" src="${state.user.picture||''}" alt="" onerror="this.style.display='none'" style="cursor:pointer" onclick="openMyProfile()">
     <span class="user-name" style="cursor:pointer" onclick="openMyProfile()">${escHtml(state.user.name)}</span>
-    ${isAdmin?`<button class="btn-admin" onclick="openAdmin()">🛡️ מנהל</button>`:''}
+    ${isAdmin?`<div class="btn-admin-wrap"><button class="btn-admin" onclick="openAdmin()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> מנהל</button><span class="admin-notif-dot" id="admin-notif-dot"></span></div>`:''}
     <button class="btn-out" onclick="signOut()">יציאה</button>`;
 }
 
@@ -902,6 +929,7 @@ function showApp(){
     navigator.geolocation.getCurrentPosition(p=>{state.userLat=p.coords.latitude;state.userLng=p.coords.longitude;},()=>{},{timeout:8000});
   }
   startPolling();
+  loadAnnouncement();
   setTimeout(()=>showAd(),1500);
   scheduleAd();
 }
@@ -1044,12 +1072,14 @@ function cardHTML(loc){
     imgSection=`<div class="card-imgs-wrap" id="cwrap-${loc.id}">
       <div class="card-imgs-track" id="ctrack-${loc.id}">${slides}</div>
       ${dots}
-      ${imgs.length>1?`<span class="card-img-count">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        ${imgs.length}</span>`:''}
-      ${loc.review_count>0?`<span class="card-img-count" style="right:auto;left:8px;background:rgba(16,185,129,.85)">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        ${loc.review_count}</span>`:''}
+      <div style="position:absolute;bottom:8px;left:8px;display:flex;gap:5px;align-items:center">
+        ${imgs.length>1?`<span class="card-img-count" style="position:static">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          ${imgs.length}</span>`:''}
+        ${loc.review_count>0?`<span class="card-img-count" style="position:static;background:rgba(16,185,129,.85)">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          ${loc.review_count}</span>`:''}
+      </div>
     </div>`;
   }else if(loc.lat&&loc.lng){
     imgSection=`<div class="card-img-map" id="cmap-${loc.id}"></div>`;
@@ -1072,6 +1102,7 @@ function cardHTML(loc){
     <div class="card-body">
       <div class="card-header"><span class="card-name">${escHtml(loc.name)}</span></div>
       <div class="card-badges">${status}${paid}${region}</div>
+      ${loc.audience?`<div class="audience-tags">${loc.audience.split(',').filter(Boolean).map(a=>`<span class="badge b-audience">${escHtml(a.trim())}</span>`).join('')}</div>`:''}
       ${cat}${desc}${addr}
       <div class="card-footer">
         <div class="card-author" onclick="event.stopPropagation();openUserProfile(${loc.user_id})" style="cursor:pointer">
@@ -1082,10 +1113,6 @@ function cardHTML(loc){
           </div>
         </div>
         <div class="card-acts">
-          ${loc.review_count>0?`<span class="btn-like" style="cursor:default;gap:4px" title="${loc.review_count} חוויות">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            ${loc.review_count}
-          </span>`:''}
           <button class="btn-like ${likedCls}" id="like-${loc.id}" onclick="event.stopPropagation();toggleLike(${loc.id})">
             <svg class="hrt" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             <span id="lc-${loc.id}">${loc.like_count||0}</span>
@@ -1178,6 +1205,7 @@ function openDetail(id){
     <div class="d-body">
       <div class="d-header"><span class="d-name">${escHtml(loc.name)}</span></div>
       <div class="d-meta">${status}${paid}${region}${cat}</div>
+      ${loc.audience?`<div class="audience-tags">${loc.audience.split(',').filter(Boolean).map(a=>`<span class="badge b-audience"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> ${escHtml(a.trim())}</span>`).join('')}</div>`:''}
       ${loc.description?`<div class="d-desc">${escHtml(loc.description)}</div>`:''}
       <div style="display:flex;flex-direction:column;gap:10px">${addrRow}${hoursRow}${linkRow}</div>
       <div class="d-row" style="cursor:pointer" onclick="openUserProfile(${loc.user_id})">
@@ -1338,6 +1366,67 @@ async function loadPendingReviews(){
   }
 }
 
+// ── Announcements ──
+const ANNOUNCE_SEEN_KEY='mtyalim_announce_seen';
+
+async function loadAnnouncement(){
+  try{
+    const data=await apiFetch('/api/announcement','GET');
+    renderAnnouncement(data);
+  }catch(e){}
+}
+
+function renderAnnouncement(data){
+  const wrap=document.getElementById('announce-bar-wrap');
+  if(!wrap)return;
+  if(!data||!data.text){wrap.innerHTML='';return;}
+  const lastSeen=localStorage.getItem(ANNOUNCE_SEEN_KEY);
+  const isNew=data.updated_at&&data.updated_at!==lastSeen;
+  const dot=document.getElementById('admin-notif-dot');
+  if(dot)dot.classList.toggle('show',!!isNew);
+  wrap.innerHTML=`<div class="announce-bar" onclick="markAnnounceSeen('${escHtml(data.updated_at||'')}')">
+    <div class="announce-bar-icon">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+    </div>
+    <div class="announce-bar-body">
+      <div class="announce-bar-title">הודעת מנהל</div>
+      <div class="announce-bar-text">${escHtml(data.text)}</div>
+      <div class="announce-bar-date">${data.updated_at?new Date(data.updated_at).toLocaleDateString('he-IL'):''}</div>
+    </div>
+  </div>`;
+}
+
+function markAnnounceSeen(ts){
+  if(!ts)return;
+  localStorage.setItem(ANNOUNCE_SEEN_KEY,ts);
+  const dot=document.getElementById('admin-notif-dot');
+  if(dot)dot.classList.remove('show');
+}
+
+async function loadCurrentAnnouncement(){
+  try{
+    const data=await apiFetch('/api/announcement','GET');
+    const el=document.getElementById('announce-input');
+    if(el&&data&&data.text)el.value=data.text;
+  }catch(e){}
+}
+
+async function saveAnnouncement(){
+  const text=(document.getElementById('announce-input')?.value||'').trim();
+  try{
+    const data=await apiFetch('/api/announcement','PUT',{text});
+    renderAnnouncement(data);
+    showToast(text?'✅ הודעה נשמרה':'הודעה נמחקה');
+    // Reset seen so admin also sees it fresh
+    localStorage.removeItem(ANNOUNCE_SEEN_KEY);
+    const dot=document.getElementById('admin-notif-dot');
+    if(dot&&text)dot.classList.add('show');
+  }catch(e){showToast('שגיאה: '+e.message);}
+}
+
 // ── Like ──
 async function toggleLike(id){
   if(!state.token)return;
@@ -1400,6 +1489,7 @@ function openEdit(id){
   document.getElementById('f-address').value=loc.address||'';
   document.getElementById('f-hours').value=loc.hours||'';
   document.getElementById('f-link').value=loc.link||'';
+  if(loc.audience){document.getElementById('f-audience').value=loc.audience||'';const sel=loc.audience.split(',').map(s=>s.trim());document.querySelectorAll('#f-audience-wrap input[type=checkbox]').forEach(cb=>{cb.checked=sel.includes(cb.value);});}
   if(loc.lat&&loc.lng){document.getElementById('f-lat').value=loc.lat;document.getElementById('f-lng').value=loc.lng;}
   // הצג תמונות קיימות עם כפתור הסרה
   renderExistingImages();
@@ -1436,6 +1526,10 @@ function goStep(n){
   if(n===3)setTimeout(initPickerMap,100);
 }
 
+function updateAudience(){
+  const vals=[...document.querySelectorAll('#f-audience-wrap input:checked')].map(cb=>cb.value);
+  document.getElementById('f-audience').value=vals.join(',');
+}
 function clearForm(){
   ['f-name','f-desc','f-address','f-hours','f-link','f-lat','f-lng','f-image-url','map-search-input'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.value='';
@@ -1445,6 +1539,8 @@ function clearForm(){
   document.getElementById('f-open').checked=true;
   document.getElementById('f-image').value='';
   document.getElementById('imgs-preview').innerHTML='';
+  document.getElementById('f-audience').value='';
+  document.querySelectorAll('#f-audience-wrap input[type=checkbox]').forEach(cb=>cb.checked=false);
   document.getElementById('region-tag-display').innerHTML='';
   document.getElementById('form-error').style.display='none';
   state.existingImageUrls=[];
@@ -1576,6 +1672,7 @@ async function submitLocation(){
       lat:parseFloat(lat),lng:parseFloat(lng),
       is_open:document.getElementById('f-open').checked,
       is_paid:document.getElementById('f-is-paid').value==='1',
+      audience:document.getElementById('f-audience').value.trim(),
       image_url:urls.join(','),
     };
     if(state.editingId){
@@ -1671,6 +1768,14 @@ async function openAdmin(){
           <button class="btn-add-admin" onclick="addAdmin()">הוסף</button>
         </div>
       </div>
+        <h4>📣 הודעות מנהל</h4>
+        <div class="admin-ad-form">
+          <label style="font-size:12px;font-weight:700;color:var(--text2)">הודעה שתופיע בראש הדף לכל המשתמשים</label>
+          <textarea id="announce-input" style="min-height:72px;resize:vertical;padding:9px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;font-family:Heebo,sans-serif;outline:none;transition:.2s;width:100%" placeholder="כתוב כאן הודעה... (השאר ריק כדי למחוק את ההודעה)"></textarea>
+          <button class="btn-save-ad" onclick="saveAnnouncement()">💾 שמור הודעה</button>
+        </div>
+      </div>
+      <div class="admin-section">
       <div class="admin-section">
         <h4>📢 ניהול פרסומת</h4>
         <div class="admin-ad-form">
@@ -1694,6 +1799,7 @@ async function openAdmin(){
         <div id="admin-reviews-list"><div style="font-size:13px;color:var(--text2);padding:8px 0">טוען...</div></div>
       </div>`;
   loadPendingReviews();
+  loadCurrentAnnouncement();
   }catch(e){document.getElementById('admin-body').innerHTML=`<div style="padding:20px">שגיאה: ${e.message}</div>`;}
 }
 
