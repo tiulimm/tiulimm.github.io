@@ -287,6 +287,15 @@ textarea{min-height:90px;resize:vertical}
 .author-meta{display:flex;flex-direction:column;gap:1px}
 .a-posts{font-size:10px;color:var(--text2);font-weight:500}
 
+.admin-tabs{display:flex;gap:4px;padding:0 0 16px;border-bottom:1px solid var(--border);margin-bottom:16px;flex-wrap:wrap}
+.admin-tab{padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;transition:.18s;display:flex;align-items:center;gap:6px}
+.admin-tab:hover{border-color:var(--accent);color:var(--accent)}
+.admin-tab.active{background:#7c3aed;color:#fff;border-color:#7c3aed}
+.admin-tab-badge{background:rgba(255,255,255,.3);color:#fff;font-size:10px;font-weight:800;padding:1px 6px;border-radius:20px;min-width:18px;text-align:center}
+.admin-tab:not(.active) .admin-tab-badge{background:#ef4444;color:#fff}
+.admin-panel{display:none}
+.admin-panel.active{display:block}
+
 .announce-bar{background:linear-gradient(135deg,#7c3aed15,#6d28d910);border:1.5px solid #7c3aed30;border-radius:12px;padding:12px 16px;display:flex;align-items:flex-start;gap:10px;margin-bottom:18px;cursor:pointer;transition:.2s}
 .announce-bar:hover{border-color:#7c3aed60}
 .announce-bar-icon{width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -302,6 +311,7 @@ textarea{min-height:90px;resize:vertical}
 
 .audience-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:2px}
 .b-audience{color:#0369a1;background:#e0f2fe;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px}
+.b-modest{color:#7c3aed;background:#ede9fe;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px}
 
 /* ── REVIEWS ── */
 .reviews-section{border-top:1px solid var(--border);padding:20px 22px;display:flex;flex-direction:column;gap:14px}
@@ -611,7 +621,7 @@ textarea{min-height:90px;resize:vertical}
           </div>
         </div>
         <div class="field">
-          <label>מיועד ל <span>(אופציונלי)</span></label>
+          <label>מיועד ל <span style="color:var(--closed)">*</span> <span style="color:var(--text2);font-weight:400;font-size:12px">(לפחות אחד)</span></label>
           <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:2px" id="f-audience-wrap">
             <label style="display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" value="משפחות" onchange="updateAudience()"> משפחות</label>
             <label style="display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" value="צעירים" onchange="updateAudience()"> צעירים</label>
@@ -628,6 +638,17 @@ textarea{min-height:90px;resize:vertical}
           <span class="toggle-lbl">המקום פתוח לקהל</span>
           <label class="toggle">
             <input type="checkbox" id="f-open" checked>
+            <span class="toggle-tr"></span>
+            <span class="toggle-th"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-lbl" style="display:flex;align-items:center;gap:6px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20c0-3.31 2.69-6 6-6s6 2.69 6 6"/></svg>
+            בדרך כלל צנוע
+          </span>
+          <label class="toggle">
+            <input type="checkbox" id="f-modest">
             <span class="toggle-tr"></span>
             <span class="toggle-th"></span>
           </label>
@@ -1102,6 +1123,8 @@ function cardHTML(loc){
     <div class="card-body">
       <div class="card-header"><span class="card-name">${escHtml(loc.name)}</span></div>
       <div class="card-badges">${status}${paid}${region}</div>
+      ${loc.is_modest?`<span class="badge b-modest" style="margin-top:2px;display:inline-flex;align-items:center;gap:4px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M6 20c0-3.31 2.69-6 6-6s6 2.69 6 6"/></svg> צנוע</span>`:''}
+      ${loc.is_modest?`<span class="badge b-modest" style="display:inline-flex;align-items:center;gap:4px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M6 20c0-3.31 2.69-6 6-6s6 2.69 6 6"/></svg> צנוע בדרך כלל</span>`:''}
       ${loc.audience?`<div class="audience-tags">${loc.audience.split(',').filter(Boolean).map(a=>`<span class="badge b-audience">${escHtml(a.trim())}</span>`).join('')}</div>`:''}
       ${cat}${desc}${addr}
       <div class="card-footer">
@@ -1182,11 +1205,11 @@ function openDetail(id){
       ${dots}
     </div>`;
   }
-  // Map – always show if coordinates exist, always below gallery (or with padding for close btn)
+  // Map – always show if coordinates exist, always below gallery
   let mapHTML='';
   if(loc.lat&&loc.lng){
     const pt=imgs.length?'14px':'56px';
-    mapHTML=`<div style="padding:${pt} 20px 0"><div class="detail-map" id="dmap"></div></div>`;
+    mapHTML=`<div style="padding:${pt} 20px 14px"><div class="detail-map" id="dmap" style="height:200px;border-radius:12px;border:1.5px solid var(--border);z-index:1"></div></div>`;
   }
   const addrRow=loc.address?`<div class="d-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>${escHtml(loc.address)}</div>`:'';
   const hoursRow=loc.hours?`<div class="d-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${escHtml(loc.hours)}</div>`:'';
@@ -1345,6 +1368,9 @@ async function loadPendingReviews(){
   if(!el)return;
   try{
     const reviews=await apiFetch('/api/admin/reviews','GET');
+    const badge=document.getElementById('pending-badge');
+    if(badge)badge.textContent=reviews.length||'';
+    if(!badge&&!reviews.length){}
     if(!reviews.length){
       el.innerHTML='<div style="font-size:13px;color:var(--text2);padding:8px 0">אין ביקורות ממתינות לאישור</div>';
       return;
@@ -1475,17 +1501,18 @@ function openEdit(id){
   const loc=state.locations.find(l=>l.id===id);
   if(!loc)return;
   state.editingId=id;
-  state.existingImageUrls=getImgs(loc); // שמור תמונות קיימות
   document.getElementById('modal-title').textContent='עריכת מקום';
   document.getElementById('modal-close-btn').style.display='';
   isFirstContrib=false;
   clearForm();
+  state.existingImageUrls=getImgs(loc); // אחרי clearForm כדי שלא יאופס!
   // Fill form
   document.getElementById('f-name').value=loc.name||'';
   document.getElementById('f-category').value=loc.category||'';
   document.getElementById('f-is-paid').value=loc.is_paid?'1':'0';
   document.getElementById('f-desc').value=loc.description||'';
   document.getElementById('f-open').checked=loc.is_open!==false;
+  document.getElementById('f-modest').checked=!!loc.is_modest;
   document.getElementById('f-address').value=loc.address||'';
   document.getElementById('f-hours').value=loc.hours||'';
   document.getElementById('f-link').value=loc.link||'';
@@ -1537,6 +1564,7 @@ function clearForm(){
   document.getElementById('f-category').value='';
   document.getElementById('f-is-paid').value='0';
   document.getElementById('f-open').checked=true;
+  document.getElementById('f-modest').checked=false;
   document.getElementById('f-image').value='';
   document.getElementById('imgs-preview').innerHTML='';
   document.getElementById('f-audience').value='';
@@ -1616,6 +1644,8 @@ async function submitLocation(){
   const lat=document.getElementById('f-lat').value;
   const lng=document.getElementById('f-lng').value;
   if(!name){showFormErr('שם המקום הוא שדה חובה');goStep(1);return;}
+  const audience=document.getElementById('f-audience').value.trim();
+  if(!audience){showFormErr('יש לסמן לפחות קהל יעד אחד');goStep(1);return;}
   if(!cat){showFormErr('יש לבחור קטגוריה');goStep(1);return;}
   if(!lat||!lng){showFormErr('יש לסמן מיקום על המפה');return;}
 
@@ -1671,8 +1701,9 @@ async function submitLocation(){
       link:document.getElementById('f-link').value.trim(),
       lat:parseFloat(lat),lng:parseFloat(lng),
       is_open:document.getElementById('f-open').checked,
+      is_modest:document.getElementById('f-modest').checked,
       is_paid:document.getElementById('f-is-paid').value==='1',
-      audience:document.getElementById('f-audience').value.trim(),
+      audience:audience,
       image_url:urls.join(','),
     };
     if(state.editingId){
@@ -1739,6 +1770,14 @@ document.getElementById('profile-modal').addEventListener('click',e=>{if(e.targe
 // Load extra admins from localStorage
 (function(){try{const a=localStorage.getItem('mtyalim_admins');if(a){const arr=JSON.parse(a);arr.forEach(e=>{if(!ADMIN_EMAILS.includes(e))ADMIN_EMAILS.push(e);});}}catch(e){}})();
 
+function adminTab(name, btn){
+  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  const panel=document.getElementById('admin-panel-'+name);
+  if(panel)panel.classList.add('active');
+}
+
 async function openAdmin(){
   document.getElementById('admin-modal').classList.add('open');
   document.getElementById('admin-body').innerHTML='<div style="padding:20px;text-align:center">טוען...</div>';
@@ -1750,9 +1789,32 @@ async function openAdmin(){
         <div class="stat-card"><div class="num">${data.locations}</div><div class="lbl">מקומות</div></div>
         <div class="stat-card"><div class="num">${data.likes}</div><div class="lbl">לייקים</div></div>
       </div>
-      <div class="admin-section">
-        <h4>📋 כל המשתמשים (${(data.all_users||data.top_users||[]).length})</h4>
-        ${(data.all_users||data.top_users||[]).map(u=>{
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="adminTab('users',this)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          משתמשים
+        </button>
+        <button class="admin-tab" onclick="adminTab('reviews',this)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          ביקורות <span class="admin-tab-badge" id="pending-badge">?</span>
+        </button>
+        <button class="admin-tab" onclick="adminTab('announce',this)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          הודעות
+        </button>
+        <button class="admin-tab" onclick="adminTab('ad',this)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+          פרסומת
+        </button>
+        <button class="admin-tab" onclick="adminTab('admins',this)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          הרשאות
+        </button>
+      </div>
+
+      <div class="admin-panel active" id="admin-panel-users">
+        <div style="font-size:13px;font-weight:800;margin-bottom:10px;color:var(--text2)">כל המשתמשים (${(data.all_users||[]).length})</div>
+        ${(data.all_users||[]).map(u=>{
           const isAdm=ADMIN_EMAILS.includes(u.email);
           return `<div class="admin-user-row">
             <img src="${escHtml(u.picture||'')}" alt="" onerror="this.style.display='none'" style="width:32px;height:32px;border-radius:50%;object-fit:cover">
@@ -1761,23 +1823,18 @@ async function openAdmin(){
           </div>`;
         }).join('')}
       </div>
-      <div class="admin-section">
-        <h4>🛡️ הוספת מנהל נוסף</h4>
-        <div class="admin-add-admin">
-          <input type="email" id="new-admin-email" placeholder="אימייל משתמש קיים" dir="ltr">
-          <button class="btn-add-admin" onclick="addAdmin()">הוסף</button>
-        </div>
+
+      <div class="admin-panel" id="admin-panel-reviews">
+        <div id="admin-reviews-list"><div style="font-size:13px;color:var(--text2);padding:8px 0">טוען...</div></div>
       </div>
-        <h4>📣 הודעות מנהל</h4>
-        <div class="admin-ad-form">
-          <label style="font-size:12px;font-weight:700;color:var(--text2)">הודעה שתופיע בראש הדף לכל המשתמשים</label>
-          <textarea id="announce-input" style="min-height:72px;resize:vertical;padding:9px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;font-family:Heebo,sans-serif;outline:none;transition:.2s;width:100%" placeholder="כתוב כאן הודעה... (השאר ריק כדי למחוק את ההודעה)"></textarea>
-          <button class="btn-save-ad" onclick="saveAnnouncement()">💾 שמור הודעה</button>
-        </div>
+
+      <div class="admin-panel" id="admin-panel-announce">
+        <label style="font-size:12px;font-weight:700;color:var(--text2);display:block;margin-bottom:6px">הודעה שתופיע בראש הדף (השאר ריק למחיקה)</label>
+        <textarea id="announce-input" style="min-height:80px;resize:vertical;padding:9px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;font-family:Heebo,sans-serif;outline:none;transition:.2s;width:100%;margin-bottom:8px" placeholder="כתוב כאן הודעה..."></textarea>
+        <button class="btn-save-ad" onclick="saveAnnouncement()">💾 שמור הודעה</button>
       </div>
-      <div class="admin-section">
-      <div class="admin-section">
-        <h4>📢 ניהול פרסומת</h4>
+
+      <div class="admin-panel" id="admin-panel-ad">
         <div class="admin-ad-form">
           <label style="font-size:12px;font-weight:700;color:var(--text2)">קישור לתמונת הפרסומת (URL)</label>
           <input type="url" id="ad-img-input" placeholder="https://..." value="${escHtml(adData.img||'')}">
@@ -1794,10 +1851,15 @@ async function openAdmin(){
           <button class="btn-save-ad" onclick="saveAd()">💾 שמור הגדרות</button>
           <button class="btn-save-ad" style="background:var(--bg);color:var(--text);border:1.5px solid var(--border)" onclick="testAd()">👁️ תצוגה מקדימה</button>
         </div>
-      <div class="admin-section" id="admin-reviews-section">
-        <h4>💬 ביקורות ממתינות לאישור</h4>
-        <div id="admin-reviews-list"><div style="font-size:13px;color:var(--text2);padding:8px 0">טוען...</div></div>
-      </div>`;
+      </div>
+
+      <div class="admin-panel" id="admin-panel-admins">
+        <div class="admin-add-admin">
+          <input type="email" id="new-admin-email" placeholder="אימייל משתמש קיים" dir="ltr">
+          <button class="btn-add-admin" onclick="addAdmin()">הוסף מנהל</button>
+        </div>
+      </div>
+    `;
   loadPendingReviews();
   loadCurrentAnnouncement();
   }catch(e){document.getElementById('admin-body').innerHTML=`<div style="padding:20px">שגיאה: ${e.message}</div>`;}
