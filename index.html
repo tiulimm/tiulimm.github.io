@@ -442,6 +442,16 @@ textarea{min-height:90px;resize:vertical}
 .csd{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.5);transition:.3s}
 .csd.act{background:#fff;width:14px;border-radius:3px}
 
+/* Shabbat badge */
+.b-shabbat{color:#5b21b6;background:#ede9fe}
+
+/* Rich text toolbar */
+.rich-toolbar{display:flex;gap:4px;margin-bottom:4px;flex-wrap:wrap}
+.rich-toolbar button{background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:4px 8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;color:var(--text);transition:.15s;line-height:1}
+.rich-toolbar button:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.rich-desc{width:100%;min-height:90px;padding:11px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:'Heebo',sans-serif;color:var(--text);transition:.2s;outline:none;direction:rtl;resize:vertical;white-space:pre-wrap}
+.rich-desc:focus{border-color:var(--accent);background:var(--bg2);box-shadow:0 0 0 3px var(--accent-light)}
+
 @media(max-width:640px){
   .header-row1{padding:0 14px;gap:10px}
   .h-search{display:none}
@@ -550,11 +560,21 @@ textarea{min-height:90px;resize:vertical}
             <select id="adv-cat" onchange="applyAdvFilter()">
               <option value="">כל הקטגוריות</option>
             </select>
+            <select id="adv-audience" onchange="applyAdvFilter()">
+              <option value="">כל הקהלים</option>
+              <option value="משפחות">משפחות</option>
+              <option value="צעירים">צעירים</option>
+              <option value="מיטיבי לכת">מיטיבי לכת</option>
+              <option value="עגלות וכיסאות גלגלים">עגלות / כיסאות גלגלים</option>
+                         </select>
             <select id="adv-paid" onchange="applyAdvFilter()">
               <option value="">הכל</option>
               <option value="free">חינם</option>
               <option value="paid">בתשלום</option>
             </select>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;cursor:pointer;padding:4px 0">
+              <input type="checkbox" id="adv-shabbat" onchange="applyAdvFilter()"> ✡️ שומר שבת בלבד
+            </label>
             <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
               <button class="adv-clear" onclick="clearAdvFilter()">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -627,12 +647,20 @@ textarea{min-height:90px;resize:vertical}
             <label style="display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" value="צעירים" onchange="updateAudience()"> צעירים</label>
             <label style="display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" value="מיטיבי לכת" onchange="updateAudience()"> מיטיבי לכת</label>
             <label style="display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" value="עגלות וכיסאות גלגלים" onchange="updateAudience()"> עגלות / כיסאות גלגלים</label>
-          </div>
+                    </div>
           <input type="hidden" id="f-audience">
         </div>
         <div class="field">
           <label>תיאור <span>(אופציונלי)</span></label>
-          <textarea id="f-desc" placeholder="ספרו על המקום, מה מיוחד בו, טיפים למבקרים..."></textarea>
+          <div class="rich-toolbar">
+            <button type="button" onclick="richCmd('bold')" title="מודגש"><b>B</b></button>
+            <button type="button" onclick="richCmd('underline')" title="קו תחתי"><u>U</u></button>
+            <button type="button" onclick="richCmd('italic')" title="נטוי"><i>I</i></button>
+            <button type="button" onclick="richInsert('\n• ')" title="נקודות">• רשימה</button>
+            <button type="button" onclick="richInsert('\n')" title="שורה חדשה">↵ שורה</button>
+          </div>
+          <div id="f-desc" class="rich-desc" contenteditable="true" placeholder="ספרו על המקום, מה מיוחד בו, טיפים למבקרים..." oninput="syncDesc()"></div>
+          <input type="hidden" id="f-desc-hidden">
         </div>
         <div class="toggle-row">
           <span class="toggle-lbl">המקום פתוח לקהל</span>
@@ -649,6 +677,16 @@ textarea{min-height:90px;resize:vertical}
           </span>
           <label class="toggle">
             <input type="checkbox" id="f-modest">
+            <span class="toggle-tr"></span>
+            <span class="toggle-th"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-lbl" style="display:flex;align-items:center;gap:6px">
+            ✡️ שומר שבת
+          </span>
+          <label class="toggle">
+            <input type="checkbox" id="f-shabbat">
             <span class="toggle-tr"></span>
             <span class="toggle-th"></span>
           </label>
@@ -770,6 +808,8 @@ const CATS = [
   {id:'הרים וטבע', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3 4 20h16L12 3z"/><path d="m12 3-4 9"/><path d="M12 3l4 9"/></svg>'},
   {id:'ערים ותרבות', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="9" width="13" height="12"/><path d="M8 9V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4"/><rect x="16" y="13" width="5" height="8"/><path d="M3 21h18"/></svg>'},
   {id:'אוכל ושתייה', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>'},
+  {id:'קברי צדיקים', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L8 6H5v3l-3 3 3 3v3h3l4 4 4-4h3v-3l3-3-3-3V6h-3L12 2z"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="9.5" y1="10.5" x2="14.5" y2="10.5"/></svg>'},
+  {id:'דרכי הגעה', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 12l4-4M3 12l4 4M21 12l-4-4M21 12l-4 4"/><path d="M3 6h18M3 18h18"/></svg>'},
   {id:'אחר', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>'},
 ];
 const REGIONS = ['צפון','מרכז','דרום'];
@@ -777,7 +817,7 @@ const REGIONS = ['צפון','מרכז','דרום'];
 let state = {
   user:null, token:null, locations:[],
   activeCat:'', activeRegion:'', searchQuery:'',
-  advRegion:'', advCat:'', advPaid:'',
+  advRegion:'', advCat:'', advPaid:'', advAudience:'', advShabbat:false,
   pickerMap:null, pickerMarker:null, cardMaps:{},
   userLat:null, userLng:null,
   editingId:null, lastCount:0, existingImageUrls:[],
@@ -978,18 +1018,20 @@ function applyAdvFilter(){
   state.advRegion=document.getElementById('adv-region').value;
   state.advCat=document.getElementById('adv-cat').value;
   state.advPaid=document.getElementById('adv-paid').value;
+  state.advAudience=document.getElementById('adv-audience')?.value||'';
+  state.advShabbat=document.getElementById('adv-shabbat')?.checked||false;
   const dot=document.getElementById('filter-active-dot');
-  const cnt=document.getElementById('filter-count');
-  const hasFilter=state.advRegion||state.advCat||state.advPaid;
+  const hasFilter=state.advRegion||state.advCat||state.advPaid||state.advAudience||state.advShabbat;
   if(dot)dot.style.display=hasFilter?'inline-block':'none';
-  if(cnt)cnt.style.display='none';
   renderGrid();
 }
 function clearAdvFilter(){
   document.getElementById('adv-region').value='';
   document.getElementById('adv-cat').value='';
   document.getElementById('adv-paid').value='';
-  state.advRegion='';state.advCat='';state.advPaid='';
+  const aa=document.getElementById('adv-audience');if(aa)aa.value='';
+  const as=document.getElementById('adv-shabbat');if(as)as.checked=false;
+  state.advRegion='';state.advCat='';state.advPaid='';state.advAudience='';state.advShabbat=false;
   const dot=document.getElementById('filter-active-dot');
   if(dot)dot.style.display='none';
   renderGrid();
@@ -1041,13 +1083,13 @@ async function loadLocations(){
 function getSorted(){
   const s=document.getElementById('sort-select')?.value||'newest';
   let locs=[...state.locations];
-  // Advanced filters (client-side)
   if(state.advRegion)locs=locs.filter(l=>l.region===state.advRegion);
   if(state.advCat)locs=locs.filter(l=>l.category===state.advCat);
   if(state.advPaid==='free')locs=locs.filter(l=>!l.is_paid);
   if(state.advPaid==='paid')locs=locs.filter(l=>l.is_paid);
-  // Update count badge
-  const hasFilter=state.advRegion||state.advCat||state.advPaid;
+  if(state.advAudience)locs=locs.filter(l=>l.audience&&l.audience.split(',').map(a=>a.trim()).includes(state.advAudience));
+  if(state.advShabbat)locs=locs.filter(l=>l.is_shabbat);
+  const hasFilter=state.advRegion||state.advCat||state.advPaid||state.advAudience||state.advShabbat;
   const fc=document.getElementById('filter-count');
   if(fc){fc.style.display=hasFilter?'':'none';fc.textContent=`${locs.length} תוצאות`;}
   if(s==='liked')locs.sort((a,b)=>(b.like_count||0)-(a.like_count||0));
@@ -1123,8 +1165,8 @@ function cardHTML(loc){
     <div class="card-body">
       <div class="card-header"><span class="card-name">${escHtml(loc.name)}</span></div>
       <div class="card-badges">${status}${paid}${region}</div>
-      ${loc.is_modest?`<span class="badge b-modest" style="margin-top:2px;display:inline-flex;align-items:center;gap:4px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M6 20c0-3.31 2.69-6 6-6s6 2.69 6 6"/></svg> צנוע</span>`:''}
-      ${loc.is_modest?`<span class="badge b-modest" style="display:inline-flex;align-items:center;gap:4px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M6 20c0-3.31 2.69-6 6-6s6 2.69 6 6"/></svg> צנוע בדרך כלל</span>`:''}
+      ${loc.is_modest?`<span class="badge b-modest" style="margin-top:2px;display:inline-flex;align-items:center;gap:4px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M6 20c0-3.31 2.69-6 6-6s6 2.69 6 6"/></svg> בדרך כלל צנוע</span>`:''}
+      ${loc.is_shabbat?`<span class="badge b-shabbat" style="margin-top:2px;display:inline-flex;align-items:center;gap:4px">✡️ שומר שבת</span>`:''}
       ${loc.audience?`<div class="audience-tags">${loc.audience.split(',').filter(Boolean).map(a=>`<span class="badge b-audience">${escHtml(a.trim())}</span>`).join('')}</div>`:''}
       ${cat}${desc}${addr}
       <div class="card-footer">
@@ -1227,7 +1269,7 @@ function openDetail(id){
     ${mapHTML}
     <div class="d-body">
       <div class="d-header"><span class="d-name">${escHtml(loc.name)}</span></div>
-      <div class="d-meta">${status}${paid}${region}${cat}</div>
+      <div class="d-meta">${status}${paid}${region}${cat}${loc.is_modest?`<span class="badge b-modest" style="display:inline-flex;align-items:center;gap:4px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M6 20c0-3.31 2.69-6 6-6s6 2.69 6 6"/></svg> צנוע</span>`:''}${loc.is_shabbat?`<span class="badge b-shabbat" style="display:inline-flex;align-items:center;gap:4px">✡️ שומר שבת</span>`:''}</div>
       ${loc.audience?`<div class="audience-tags">${loc.audience.split(',').filter(Boolean).map(a=>`<span class="badge b-audience"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> ${escHtml(a.trim())}</span>`).join('')}</div>`:''}
       ${loc.description?`<div class="d-desc">${escHtml(loc.description)}</div>`:''}
       <div style="display:flex;flex-direction:column;gap:10px">${addrRow}${hoursRow}${linkRow}</div>
@@ -1510,9 +1552,13 @@ function openEdit(id){
   document.getElementById('f-name').value=loc.name||'';
   document.getElementById('f-category').value=loc.category||'';
   document.getElementById('f-is-paid').value=loc.is_paid?'1':'0';
-  document.getElementById('f-desc').value=loc.description||'';
+  // rich desc — contenteditable
+  const descEl=document.getElementById('f-desc');
+  if(descEl){descEl.innerHTML=(loc.description||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
+  document.getElementById('f-desc-hidden').value=loc.description||'';
   document.getElementById('f-open').checked=loc.is_open!==false;
   document.getElementById('f-modest').checked=!!loc.is_modest;
+  document.getElementById('f-shabbat').checked=!!loc.is_shabbat;
   document.getElementById('f-address').value=loc.address||'';
   document.getElementById('f-hours').value=loc.hours||'';
   document.getElementById('f-link').value=loc.link||'';
@@ -1557,14 +1603,65 @@ function updateAudience(){
   const vals=[...document.querySelectorAll('#f-audience-wrap input:checked')].map(cb=>cb.value);
   document.getElementById('f-audience').value=vals.join(',');
 }
+
+// ── Rich text editor ──
+function richCmd(cmd){
+  document.getElementById('f-desc').focus();
+  document.execCommand(cmd,false,null);
+  syncDesc();
+}
+function richInsert(text){
+  const el=document.getElementById('f-desc');
+  el.focus();
+  const sel=window.getSelection();
+  if(sel.rangeCount){
+    const range=sel.getRangeAt(0);
+    range.deleteContents();
+    if(text==='\n'){
+      const br=document.createElement('br');
+      range.insertNode(br);
+      range.setStartAfter(br);
+      range.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }else{
+      const tn=document.createTextNode(text);
+      range.insertNode(tn);
+      range.setStartAfter(tn);
+      range.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+  }
+  syncDesc();
+}
+function syncDesc(){
+  const el=document.getElementById('f-desc');
+  const hid=document.getElementById('f-desc-hidden');
+  if(el&&hid){
+    // Convert HTML to plain text preserving line breaks
+    let text=el.innerHTML
+      .replace(/<br\s*\/?>/gi,'\n')
+      .replace(/<\/p>/gi,'\n')
+      .replace(/<\/div>/gi,'\n')
+      .replace(/<[^>]+>/g,'')
+      .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&nbsp;/g,' ');
+    hid.value=text;
+  }
+}
 function clearForm(){
-  ['f-name','f-desc','f-address','f-hours','f-link','f-lat','f-lng','f-image-url','map-search-input'].forEach(id=>{
+  ['f-name','f-address','f-hours','f-link','f-lat','f-lng','f-image-url','map-search-input'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.value='';
   });
+  // rich text editor clear
+  const descEl=document.getElementById('f-desc');
+  if(descEl)descEl.innerHTML='';
+  document.getElementById('f-desc-hidden').value='';
   document.getElementById('f-category').value='';
   document.getElementById('f-is-paid').value='0';
   document.getElementById('f-open').checked=true;
   document.getElementById('f-modest').checked=false;
+  document.getElementById('f-shabbat').checked=false;
   document.getElementById('f-image').value='';
   document.getElementById('imgs-preview').innerHTML='';
   document.getElementById('f-audience').value='';
@@ -1695,13 +1792,14 @@ async function submitLocation(){
     }
     const payload={
       name,category:cat,
-      description:document.getElementById('f-desc').value.trim(),
+      description:document.getElementById('f-desc-hidden').value.trim(),
       address:document.getElementById('f-address').value.trim(),
       hours:document.getElementById('f-hours').value.trim(),
       link:document.getElementById('f-link').value.trim(),
       lat:parseFloat(lat),lng:parseFloat(lng),
       is_open:document.getElementById('f-open').checked,
       is_modest:document.getElementById('f-modest').checked,
+      is_shabbat:document.getElementById('f-shabbat').checked,
       is_paid:document.getElementById('f-is-paid').value==='1',
       audience:audience,
       image_url:urls.join(','),
